@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:questlines/state/app_state.dart';
+import 'package:questlines/widgets/quest_card.dart';
 
-class MainPage extends StatelessWidget {
-  const MainPage({super.key});
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,9 +17,7 @@ class MainPage extends StatelessWidget {
           selectedQuest != null
               ? Column(
                   children: [
-                    Text('Current Quest: ${selectedQuest.name}'),
-                    Text(
-                        'Current Stage: ${selectedQuest.getSelectedStage().name}')
+                    QuestCard(selectedQuest, false)
                   ],
                 )
               : const Text('No Quest Selected')

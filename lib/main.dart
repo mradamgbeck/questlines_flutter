@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:questlines/pages/debug_panel.dart';
-import 'package:questlines/pages/journal_page.dart';
-import 'package:questlines/pages/main_page.dart';
+import 'package:questlines/pages/quest_list_page.dart';
+import 'package:questlines/pages/home_page.dart';
 import 'package:questlines/state/app_state.dart';
 
 void main() {
@@ -23,32 +23,36 @@ class MyApp extends StatelessWidget {
             colorScheme: ColorScheme.fromSeed(
                 seedColor: const Color.fromARGB(255, 44, 71, 0)),
           ),
-          home: const HomePage(title: 'Questlines'),
+          home: const MainPage(title: 'Questlines'),
         ));
   }
 }
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key, required this.title});
+class MainPage extends StatefulWidget {
+  const MainPage({super.key, required this.title});
 
   final String title;
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<MainPage> createState() => _MainPageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _MainPageState extends State<MainPage> {
   var selectedPage = 0;
 
   @override
   Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
+
     Widget page;
     switch (selectedPage) {
       case 0:
-        page = const MainPage();
+        page = const HomePage();
       case 1:
-        page = const JournalPage();
+        page = QuestListPage(appState.activeQuests);
       case 2:
+        page = QuestListPage(appState.completedQuests);
+      case 3:
         page = const DebugPanel();
       default:
         throw UnimplementedError('No widget for $selectedPage');
@@ -63,15 +67,19 @@ class _HomePageState extends State<HomePage> {
               child: NavigationBar(
             destinations: const [
               NavigationDestination(
-                icon: Icon(Icons.home),
+                icon: Icon(Icons.bungalow),
                 label: 'Home',
               ),
               NavigationDestination(
                 icon: Icon(Icons.book),
-                label: 'Journal',
+                label: 'Active',
               ),
               NavigationDestination(
-                icon: Icon(Icons.bungalow),
+                icon: Icon(Icons.done),
+                label: 'Complete',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.bug_report),
                 label: 'Debug Panel',
               ),
             ],
@@ -90,8 +98,3 @@ class _HomePageState extends State<HomePage> {
         ]));
   }
 }
-
-
-
-
-

@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:questlines/types/quest.dart';
+import 'package:string_extension/string_extension.dart';
 import 'package:word_generator/word_generator.dart';
 
 var wordGen = WordGenerator();
@@ -14,4 +15,4 @@ generateQuest() {
   return quest;
 }
 
-generateBullshit() => '${wordGen.randomVerb()} the ${wordGen.randomNoun()}';
+generateBullshit() => '${wordGen.randomVerb().capitalize()} the ${wordGen.randomNoun()}';

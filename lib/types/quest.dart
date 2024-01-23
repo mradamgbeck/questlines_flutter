@@ -10,6 +10,7 @@ class Quest {
   bool complete = false;
 
   Quest(this.name);
+
   addStage(stageName) {
     stages.add(Stage(stageName));
   }
@@ -18,7 +19,7 @@ class Quest {
     stages.removeWhere((element) => element.id == uuid);
   }
 
-  getSelectedStage(){
+  getSelectedStage() {
     return stages.firstWhere((stage) => stage.selected);
   }
 }

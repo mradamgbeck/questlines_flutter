@@ -11,11 +11,11 @@ class DebugPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
     addQuest() {
-      appState.quests.add(generateQuest());
+      appState.activeQuests.add(generateQuest());
     }
 
     clearQuests() {
-      appState.quests = [];
+      appState.activeQuests = [];
     }
 
     return ListView(
