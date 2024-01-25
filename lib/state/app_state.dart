@@ -1,8 +1,8 @@
 // ignore_for_file: avoid_function_literals_in_foreach_calls
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:questlines/types/quest.dart';
-import 'package:collection/collection.dart';
 
 class MyAppState extends ChangeNotifier {
   List<Quest> activeQuests = [];
@@ -24,7 +24,6 @@ class MyAppState extends ChangeNotifier {
   selectQuest(id) {
     var questToSelect = activeQuests.firstWhere((quest) => quest.id == id);
     questToSelect.selected = true;
-    questToSelect.stages[0].selected = true;
     activeQuests.forEach((quest) => {
           if (quest.id != id) {quest.selected = false}
         });
@@ -36,19 +35,14 @@ class MyAppState extends ChangeNotifier {
   }
 
   completeActiveStage(quest) {
-    var currentStageIndex =
-        quest.stages.indexWhere((stage) => stage.selected == true);
     var currentStage =
-        quest.stages.firstWhere((stage) => stage.selected == true);
+        quest.getSelectedStage();
     currentStage.complete = true;
-    currentStage.selected = false;
-    if (currentStageIndex != quest.stages.length - 1) {
-      var nextStage = quest.stages[currentStageIndex + 1];
-      nextStage.selected = true;
+    if (quest.selectedStage != quest.stages.length - 1) {
+      quest.selectedStage += 1;
     } else {
       completeQuest(quest);
     }
-
-    notifyListeners();
+      notifyListeners();
   }
 }

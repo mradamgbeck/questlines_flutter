@@ -5,15 +5,15 @@ import '../types/quest.dart';
 
 class QuestCard extends StatelessWidget {
   final Quest quest;
-  final bool displayStages;
-  const QuestCard(this.quest, this.displayStages, {super.key});
+  final bool isListPage;
+  const QuestCard(this.quest, this.isListPage, {super.key});
 
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
 
     ListTile getQuestTile() {
-      return quest.complete
+      return isListPage
           ? ListTile(
               leading: const Icon(Icons.done),
               title: Text(quest.name),
@@ -21,11 +21,16 @@ class QuestCard extends StatelessWidget {
           : ListTile(
               leading: const Icon(Icons.map),
               title: Text(quest.name),
-              subtitle: CheckboxListTile(
-                  title: Text(quest.getSelectedStage().name),
-                  value: quest.getSelectedStage().complete,
-                  onChanged: (value) => {appState.completeActiveStage(quest)}),
-            );
+              subtitle: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Text(quest.getSelectedStage().name),
+                  TextButton(
+                    child: Text('Done'),
+                    onPressed: () => {appState.completeActiveStage(quest)},
+                  )
+                ],
+              ));
     }
 
     List<Widget> getOptionButtons() {
@@ -50,8 +55,15 @@ class QuestCard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           getQuestTile(),
-          if (displayStages)
-            for (var stage in quest.stages) Text(stage.name),
+          if (isListPage)
+            for (var stage in quest.stages)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  stage.complete ? Icon(Icons.done) : Icon(Icons.arrow_right),
+                  Text(stage.name)
+                ],
+              ),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: getOptionButtons(),

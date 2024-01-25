@@ -8,8 +8,8 @@ class Quest {
   DateTime created = DateTime.now();
   bool selected = false;
   bool complete = false;
-
-  Quest(this.name);
+  int selectedStage = 0;
+  Quest(this.name, this.stages);
 
   addStage(stageName) {
     stages.add(Stage(stageName));
@@ -20,6 +20,6 @@ class Quest {
   }
 
   getSelectedStage() {
-    return stages.firstWhere((stage) => stage.selected);
+    return stages[selectedStage];
   }
 }

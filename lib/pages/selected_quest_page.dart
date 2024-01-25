@@ -3,8 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:questlines/state/app_state.dart';
 import 'package:questlines/widgets/quest_card.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class SelectedQuestPage extends StatelessWidget {
+  const SelectedQuestPage({super.key});
 
   @override
   Widget build(BuildContext context) {

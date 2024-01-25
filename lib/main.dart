@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:questlines/pages/debug_panel.dart';
 import 'package:questlines/pages/quest_list_page.dart';
-import 'package:questlines/pages/home_page.dart';
+import 'package:questlines/pages/selected_quest_page.dart';
 import 'package:questlines/state/app_state.dart';
+
+import 'pages/new_quest_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,10 +21,7 @@ class MyApp extends StatelessWidget {
         child: MaterialApp(
           title: 'Questlines',
           theme: ThemeData(
-            useMaterial3: true,
-            colorScheme: ColorScheme.fromSeed(
-                seedColor: const Color.fromARGB(255, 44, 71, 0)),
-          ),
+              useMaterial3: true, colorScheme: const ColorScheme.dark()),
           home: const MainPage(title: 'Questlines'),
         ));
   }
@@ -47,18 +46,21 @@ class _MainPageState extends State<MainPage> {
     Widget page;
     switch (selectedPage) {
       case 0:
-        page = const HomePage();
+        page = const SelectedQuestPage();
       case 1:
         page = QuestListPage(appState.activeQuests);
       case 2:
         page = QuestListPage(appState.completedQuests);
       case 3:
+        page = NewQuestPage();
+     case 4:
         page = const DebugPanel();
       default:
         throw UnimplementedError('No widget for $selectedPage');
     }
     return Scaffold(
         appBar: AppBar(
+          centerTitle: true,
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
           title: Text(widget.title),
         ),
@@ -68,7 +70,7 @@ class _MainPageState extends State<MainPage> {
             destinations: const [
               NavigationDestination(
                 icon: Icon(Icons.bungalow),
-                label: 'Home',
+                label: 'Selected',
               ),
               NavigationDestination(
                 icon: Icon(Icons.book),
@@ -77,6 +79,10 @@ class _MainPageState extends State<MainPage> {
               NavigationDestination(
                 icon: Icon(Icons.done),
                 label: 'Complete',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.add),
+                label: 'New',
               ),
               NavigationDestination(
                 icon: Icon(Icons.bug_report),
@@ -94,7 +100,7 @@ class _MainPageState extends State<MainPage> {
               child: Container(
             color: Theme.of(context).colorScheme.primaryContainer,
             child: page,
-          ))
+          )),
         ]));
   }
 }
