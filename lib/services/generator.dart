@@ -8,13 +8,17 @@ import '../types/stage.dart';
 var wordGen = WordGenerator();
 
 generateQuest() {
-  var quest = Quest(generateBullshit(), [Stage(generateBullshit())]);
+  var quest = Quest(getRandomVerbTheNoun(), [Stage(getRandomVerbTheNoun())]);
   var rando = Random().nextInt(8) + 1;
   for (var i = 0; i < rando; i++) {
-    quest.addStage(generateBullshit());
+    quest.addStage(getRandomVerbTheNoun());
   }
   return quest;
 }
 
-generateBullshit() =>
+getRandomVerbTheNoun() =>
     '${wordGen.randomVerb().capitalize()} the ${wordGen.randomNoun()}';
+
+getRandomSentence() {
+  return 'Not a quest in sight, ${wordGen.randomVerb()}ing the ${wordGen.randomSentence()}, M\'Lord!';
+}

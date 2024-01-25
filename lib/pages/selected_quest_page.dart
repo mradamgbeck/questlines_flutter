@@ -16,11 +16,13 @@ class SelectedQuestPage extends StatelessWidget {
         children: <Widget>[
           selectedQuest != null
               ? Column(
-                  children: [
-                    QuestCard(selectedQuest, false, false)
-                  ],
+                  children: [QuestCard(selectedQuest, false, false)],
                 )
-              : const Text('No Quest Selected')
+              : Card(
+                  child: Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text('No Quests, M\'Lord!'),
+                )),
         ],
       ),
     );

@@ -7,12 +7,23 @@ class QuestListPage extends StatelessWidget {
   final List<Quest> quests;
   @override
   Widget build(BuildContext context) {
-
     List<Widget> getQuestWidgets(quests) {
       if (quests.isNotEmpty) {
-        return quests.map<Widget>((quest) => QuestCard(quest, true, false)).toList();
+        return quests
+            .map<Widget>((quest) => QuestCard(quest, true, false))
+            .toList();
       }
-      return [const Text('No Quests Available')];
+      return [
+        Column(
+          children: const [
+            Card(
+                child: Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text('No Quests, M\'Lord!', textAlign: TextAlign.center),
+            )),
+          ],
+        )
+      ];
     }
 
     return ListView(children: getQuestWidgets(quests));

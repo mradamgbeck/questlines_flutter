@@ -8,14 +8,14 @@ import 'package:questlines/widgets/quest_card.dart';
 import '../types/quest.dart';
 import '../types/stage.dart';
 
-class NewQuestPage extends StatefulWidget {
-  const NewQuestPage({super.key});
+class EditQuestPage extends StatefulWidget {
+  const EditQuestPage({super.key});
 
   @override
-  State<NewQuestPage> createState() => _NewQuestPageState();
+  State<EditQuestPage> createState() => _EditQuestPageState();
 }
 
-class _NewQuestPageState extends State<NewQuestPage> {
+class _EditQuestPageState extends State<EditQuestPage> {
   final _formKey = GlobalKey<FormState>();
 
   TextEditingController questController = TextEditingController();
@@ -44,7 +44,6 @@ class _NewQuestPageState extends State<NewQuestPage> {
               onPressed: () {
                 setState(() {
                   quest.name = questController.text;
-                  // questController.clear();
                 });
               },
               child: const Text('Set Quest Name'),

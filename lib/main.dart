@@ -5,7 +5,7 @@ import 'package:questlines/pages/quest_list_page.dart';
 import 'package:questlines/pages/selected_quest_page.dart';
 import 'package:questlines/state/app_state.dart';
 
-import 'pages/new_quest_page.dart';
+import 'pages/edit_quest_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -52,7 +52,7 @@ class _MainPageState extends State<MainPage> {
       case 2:
         page = QuestListPage(appState.completedQuests);
       case 3:
-        page = NewQuestPage();
+        page = EditQuestPage();
      case 4:
         page = const DebugPanel();
       default:
