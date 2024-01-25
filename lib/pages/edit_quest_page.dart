@@ -54,7 +54,7 @@ class _EditQuestPageState extends State<EditQuestPage> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SizedBox(
-                  width: 250,
+                  width: 300,
                   child: TextFormField(
                     controller: questController,
                     decoration: InputDecoration(label: Text('Quest Name')),
