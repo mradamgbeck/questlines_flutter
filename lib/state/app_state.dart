@@ -35,14 +35,12 @@ class MyAppState extends ChangeNotifier {
   }
 
   completeActiveStage(quest) {
-    var currentStage =
-        quest.getSelectedStage();
-    currentStage.complete = true;
-    if (quest.selectedStage != quest.stages.length - 1) {
-      quest.selectedStage += 1;
-    } else {
+    quest.getSelectedStage().complete = true;
+    if (quest.isOnLastStage()) {
       completeQuest(quest);
+    } else {
+      quest.selectedStage += 1;
     }
-      notifyListeners();
+    notifyListeners();
   }
 }

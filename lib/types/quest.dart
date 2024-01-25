@@ -22,4 +22,8 @@ class Quest {
   getSelectedStage() {
     return stages[selectedStage];
   }
+
+  isOnLastStage() {
+    return selectedStage == stages.length - 1;
+  }
 }
