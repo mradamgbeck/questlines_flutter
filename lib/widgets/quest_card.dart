@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:questlines/pages/edit_quest_page.dart';
 import 'package:questlines/state/app_state.dart';
 import '../types/quest.dart';
 
@@ -47,7 +48,10 @@ class QuestCard extends StatelessWidget {
               if (!quest.complete)
                 TextButton(
                   child: const Text('Edit'),
-                  onPressed: () {/* ... */},
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => EditQuestPage(quest)));
+                  },
                 ),
               const SizedBox(width: 8),
             ]
@@ -65,7 +69,10 @@ class QuestCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   stage.complete ? Icon(Icons.done) : Icon(Icons.arrow_right),
-                  Text(stage.name)
+                  Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: Text(stage.name),
+                  )
                 ],
               ),
           Row(

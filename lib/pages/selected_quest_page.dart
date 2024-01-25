@@ -10,20 +10,22 @@ class SelectedQuestPage extends StatelessWidget {
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
     var selectedQuest = appState.getSelectedQuest();
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          selectedQuest != null
-              ? Column(
-                  children: [QuestCard(selectedQuest, false, false)],
-                )
-              : Card(
-                  child: Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text('No Quests, M\'Lord!'),
-                )),
-        ],
+    return SingleChildScrollView(
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            selectedQuest != null
+                ? Column(
+                    children: [QuestCard(selectedQuest, false, false)],
+                  )
+                : Card(
+                    child: Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text('No Quests, M\'Lord!'),
+                  )),
+          ],
+        ),
       ),
     );
   }

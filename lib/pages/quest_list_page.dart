@@ -14,14 +14,16 @@ class QuestListPage extends StatelessWidget {
             .toList();
       }
       return [
-        Column(
-          children: const [
-            Card(
-                child: Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text('No Quests, M\'Lord!', textAlign: TextAlign.center),
-            )),
-          ],
+        SingleChildScrollView(
+          child: Column(
+            children: const [
+              Card(
+                  child: Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text('No Quests, M\'Lord!', textAlign: TextAlign.center),
+              )),
+            ],
+          ),
         )
       ];
     }

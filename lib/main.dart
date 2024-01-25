@@ -6,6 +6,8 @@ import 'package:questlines/pages/selected_quest_page.dart';
 import 'package:questlines/state/app_state.dart';
 
 import 'pages/edit_quest_page.dart';
+import 'types/quest.dart';
+import 'types/stage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -52,8 +54,8 @@ class _MainPageState extends State<MainPage> {
       case 2:
         page = QuestListPage(appState.completedQuests);
       case 3:
-        page = EditQuestPage();
-     case 4:
+        page = EditQuestPage(Quest('', <Stage>[]));
+      case 4:
         page = const DebugPanel();
       default:
         throw UnimplementedError('No widget for $selectedPage');
@@ -84,10 +86,10 @@ class _MainPageState extends State<MainPage> {
                 icon: Icon(Icons.add),
                 label: 'New',
               ),
-              NavigationDestination(
-                icon: Icon(Icons.bug_report),
-                label: 'Debug Panel',
-              ),
+              // NavigationDestination(
+              //   icon: Icon(Icons.bug_report),
+              //   label: 'Debug Panel',
+              // ),
             ],
             selectedIndex: selectedPage,
             onDestinationSelected: (value) => {
