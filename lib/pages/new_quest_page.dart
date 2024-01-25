@@ -8,55 +8,82 @@ import 'package:questlines/widgets/quest_card.dart';
 import '../types/quest.dart';
 import '../types/stage.dart';
 
-class NewQuestPage extends StatelessWidget {
-  NewQuestPage({super.key});
+class NewQuestPage extends StatefulWidget {
+  const NewQuestPage({super.key});
+
+  @override
+  State<NewQuestPage> createState() => _NewQuestPageState();
+}
+
+class _NewQuestPageState extends State<NewQuestPage> {
   final _formKey = GlobalKey<FormState>();
 
   TextEditingController questController = TextEditingController();
+
   TextEditingController stageController = TextEditingController();
+  var stages = <Stage>[];
 
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-    var stageName = '';
-    var questName = '';
-    var stages = [Stage(stageName)];
-    var quest = Quest(questName, stages);
+    var quest = Quest(questController.text, stages);
 
-    return Padding(
-      padding: EdgeInsets.all(10.0),
-      child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              TextFormField(
+    return Form(
+        key: _formKey,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            SizedBox(
+              width: 300,
+              child: TextFormField(
                 controller: questController,
                 decoration: InputDecoration(label: Text('Quest Name')),
               ),
-              TextFormField(
+            ),
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  quest.name = questController.text;
+                  // questController.clear();
+                });
+              },
+              child: const Text('Set Quest Name'),
+            ),
+            SizedBox(
+              height: 25,
+            ),
+            Text('Stages'),
+            SizedBox(
+              width: 300,
+              child: TextFormField(
                 controller: stageController,
                 decoration: InputDecoration(label: Text('Stage Name')),
               ),
-              Row(
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      quest.stages.add(Stage(stageController.text));
-                    },
-                    child: const Text('Add Stage'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      appState.addQuest(quest);
-                    },
-                    child: const Text('Save Quest'),
-                  ),
-                ],
-              ),
-              QuestCard(quest, true)
-            ],
-          )),
-    );
+            ),
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  stages.add(Stage(stageController.text));
+                  stageController.clear();
+                });
+              },
+              child: const Text('Add Stage'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  quest.stages = stages;
+                  appState.addQuest(quest);
+                  questController.clear();
+                  stageController.clear();
+                  stages = <Stage>[];
+                  quest = Quest(questController.text, stages);
+                });
+              },
+              child: const Text('Save Quest'),
+            ),
+            QuestCard(quest, true, true)
+          ],
+        ));
   }
 }

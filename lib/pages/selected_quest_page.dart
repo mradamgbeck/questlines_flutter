@@ -17,7 +17,7 @@ class SelectedQuestPage extends StatelessWidget {
           selectedQuest != null
               ? Column(
                   children: [
-                    QuestCard(selectedQuest, false)
+                    QuestCard(selectedQuest, false, false)
                   ],
                 )
               : const Text('No Quest Selected')

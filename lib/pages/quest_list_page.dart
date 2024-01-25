@@ -10,7 +10,7 @@ class QuestListPage extends StatelessWidget {
 
     List<Widget> getQuestWidgets(quests) {
       if (quests.isNotEmpty) {
-        return quests.map<Widget>((quest) => QuestCard(quest, true)).toList();
+        return quests.map<Widget>((quest) => QuestCard(quest, true, false)).toList();
       }
       return [const Text('No Quests Available')];
     }

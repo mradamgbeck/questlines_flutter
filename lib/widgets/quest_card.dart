@@ -6,7 +6,9 @@ import '../types/quest.dart';
 class QuestCard extends StatelessWidget {
   final Quest quest;
   final bool isListPage;
-  const QuestCard(this.quest, this.isListPage, {super.key});
+  final bool displayOnly;
+
+  const QuestCard(this.quest, this.isListPage, this.displayOnly, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,11 +17,11 @@ class QuestCard extends StatelessWidget {
     ListTile getQuestTile() {
       return isListPage
           ? ListTile(
-              leading: const Icon(Icons.done),
+              leading: getQuestIcon(),
               title: Text(quest.name),
             )
           : ListTile(
-              leading: const Icon(Icons.map),
+              leading: getQuestIcon(),
               title: Text(quest.name),
               subtitle: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -34,20 +36,22 @@ class QuestCard extends StatelessWidget {
     }
 
     List<Widget> getOptionButtons() {
-      return <Widget>[
-        if (!quest.complete && !quest.selected)
-          TextButton(
-            child: const Text('Select'),
-            onPressed: () => {appState.selectQuest(quest.id)},
-          ),
-        const SizedBox(width: 8),
-        if (!quest.complete)
-          TextButton(
-            child: const Text('View / Edit'),
-            onPressed: () {/* ... */},
-          ),
-        const SizedBox(width: 8),
-      ];
+      return !displayOnly
+          ? <Widget>[
+              if (!quest.complete && !quest.selected)
+                TextButton(
+                  child: const Text('Select'),
+                  onPressed: () => {appState.selectQuest(quest.id)},
+                ),
+              const SizedBox(width: 8),
+              if (!quest.complete)
+                TextButton(
+                  child: const Text('Edit'),
+                  onPressed: () {/* ... */},
+                ),
+              const SizedBox(width: 8),
+            ]
+          : <Widget>[];
     }
 
     return Card(
@@ -72,4 +76,6 @@ class QuestCard extends StatelessWidget {
       ),
     );
   }
+
+  Icon getQuestIcon() => quest.complete ? Icon(Icons.done) : Icon(Icons.map);
 }
