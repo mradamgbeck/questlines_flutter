@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
           title: 'Questlines',
           theme: ThemeData(
               useMaterial3: true, colorScheme: const ColorScheme.dark()),
-          home: const MainPage(title: 'Questlines'),
+          home: const MainPage(title: 'QUESTLINES'),
         ));
   }
 }
@@ -86,10 +86,10 @@ class _MainPageState extends State<MainPage> {
                 icon: Icon(Icons.add),
                 label: 'New',
               ),
-              // NavigationDestination(
-              //   icon: Icon(Icons.bug_report),
-              //   label: 'Debug Panel',
-              // ),
+              NavigationDestination(
+                icon: Icon(Icons.bug_report),
+                label: 'Debug Panel',
+              ),
             ],
             selectedIndex: selectedPage,
             onDestinationSelected: (value) => {
