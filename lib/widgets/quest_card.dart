@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:questlines/pages/edit_quest_page.dart';
 import 'package:questlines/state/app_state.dart';
+import 'package:questlines/types/stage.dart';
 import '../types/quest.dart';
 
 class QuestCard extends StatelessWidget {
@@ -16,6 +17,7 @@ class QuestCard extends StatelessWidget {
     var appState = context.watch<MyAppState>();
 
     ListTile getQuestTile() {
+      int selectedStage = appState.getSelectedStageForQuest(quest.id);
       return isListPage
           ? ListTile(
               leading: getQuestIcon(),
@@ -27,10 +29,10 @@ class QuestCard extends StatelessWidget {
               subtitle: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Text(quest.getSelectedStage().name),
+                  Text(selectedStage.name),
                   TextButton(
                     child: Text('Done'),
-                    onPressed: () => {appState.completeActiveStage(quest)},
+                    onPressed: () => {appState.completeStage(selectedStage)},
                   )
                 ],
               ));
@@ -50,7 +52,7 @@ class QuestCard extends StatelessWidget {
                   child: const Text('Edit'),
                   onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => EditQuestPage(quest)));
+                        builder: (context) => EditQuestPage.withQuest(quest)));
                   },
                 ),
               const SizedBox(width: 8),

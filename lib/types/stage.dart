@@ -1,10 +1,15 @@
-import 'package:uuid/uuid.dart';
+import 'package:objectbox/objectbox.dart';
+import 'package:questlines/types/quest.dart';
 
+@Entity()
 class Stage {
-  String id = const Uuid().v4();
+  int id;
   String name = '';
+  @Property(type: PropertyType.date)
   DateTime created = DateTime.now();
+  bool selected = false;
   bool complete = false;
-
-  Stage(this.name);
+  final quest = ToOne<Quest>();
+  Stage({this.id = 0});
+  Stage.withName(this.name, {this.id = 0});
 }

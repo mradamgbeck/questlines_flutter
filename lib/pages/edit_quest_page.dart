@@ -3,26 +3,23 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:questlines/state/app_state.dart';
-import '../types/quest.dart';
+import 'package:questlines/types/quest.dart';
 import '../types/stage.dart';
 
 class EditQuestPage extends StatefulWidget {
-  Quest quest;
+  Quest quest = Quest();
 
-  EditQuestPage(this.quest, {super.key});
-
+  EditQuestPage({super.key});
+  EditQuestPage.withQuest(this.quest, {super.key});
   @override
   State<EditQuestPage> createState() => _EditQuestPageState();
 }
 
 class _EditQuestPageState extends State<EditQuestPage> {
   final _formKey = GlobalKey<FormState>();
-
   TextEditingController questController = TextEditingController();
-
   TextEditingController stageController = TextEditingController();
   var stages = <Stage>[];
-
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
@@ -82,7 +79,8 @@ class _EditQuestPageState extends State<EditQuestPage> {
                 ElevatedButton(
                   onPressed: () {
                     setState(() {
-                      widget.quest.stages.add(Stage(stageController.text));
+                      widget.quest.stages
+                          .add(Stage.withName(stageController.text));
                       stageController.clear();
                     });
                   },
@@ -91,7 +89,7 @@ class _EditQuestPageState extends State<EditQuestPage> {
                 ElevatedButton(
                   onPressed: () {
                     setState(() {
-                      appState.addQuest(widget.quest);
+                      appState.saveQuest(widget.quest);
                       questController.clear();
                       stageController.clear();
                       stages = <Stage>[];

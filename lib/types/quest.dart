@@ -1,29 +1,20 @@
+import 'package:objectbox/objectbox.dart';
 import 'package:questlines/types/stage.dart';
-import 'package:uuid/uuid.dart';
 
+@Entity()
 class Quest {
-  String id = const Uuid().v4();
+  int id;
   String name = '';
-  List<Stage> stages = [];
+  @Property(type: PropertyType.date)
   DateTime created = DateTime.now();
   bool selected = false;
   bool complete = false;
-  int selectedStage = 0;
-  Quest(this.name, this.stages);
-
-  addStage(stageName) {
-    stages.add(Stage(stageName));
-  }
-
-  removeStage(uuid) {
-    stages.removeWhere((element) => element.id == uuid);
-  }
-
-  getSelectedStage() {
-    return stages[selectedStage];
-  }
+  @Backlink()
+  final stages = ToMany<Stage>();
+  Quest({this.id = 0});
 
   isOnLastStage() {
-    return selectedStage == stages.length - 1;
+    return stages.indexWhere((element) => element.selected) ==
+        stages.length - 1;
   }
 }

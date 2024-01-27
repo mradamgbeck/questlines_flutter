@@ -1,13 +1,18 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:flutter/material.dart';
-import 'package:questlines/types/quest.dart';
+import 'package:provider/provider.dart';
+import 'package:questlines/state/app_state.dart';
 import 'package:questlines/widgets/quest_card.dart';
 
-class QuestListPage extends StatelessWidget {
-  const QuestListPage(this.quests, {super.key});
-  final List<Quest> quests;
+class CompletedQuestsPage extends StatelessWidget {
+  const CompletedQuestsPage({super.key});
   @override
   Widget build(BuildContext context) {
-    List<Widget> getQuestWidgets(quests) {
+    var appState = context.watch<MyAppState>();
+
+    List<Widget> getQuestWidgets() {
+      List quests = appState.getCompletedQuests();
       if (quests.isNotEmpty) {
         return quests
             .map<Widget>((quest) => QuestCard(quest, true, false))
@@ -28,6 +33,6 @@ class QuestListPage extends StatelessWidget {
       ];
     }
 
-    return ListView(children: getQuestWidgets(quests));
+    return ListView(children: getQuestWidgets());
   }
 }
