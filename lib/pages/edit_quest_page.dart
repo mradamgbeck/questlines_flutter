@@ -9,8 +9,10 @@ import '../types/stage.dart';
 class EditQuestPage extends StatefulWidget {
   Quest quest = Quest();
 
-  EditQuestPage({super.key});
-  EditQuestPage.withQuest(this.quest, {super.key});
+  var editing = false;
+
+  EditQuestPage({super.key, this.editing = false});
+  EditQuestPage.withQuest(this.quest, {super.key, this.editing = true});
   @override
   State<EditQuestPage> createState() => _EditQuestPageState();
 }
@@ -45,102 +47,113 @@ class _EditQuestPageState extends State<EditQuestPage> {
 
     return Scaffold(
       body: SingleChildScrollView(
-        child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
+        child: Column(
+          children: [
+            Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: 300,
+                      child: TextFormField(
+                        onChanged: (value) {
+                          setState(() {
+                            widget.quest.name = value;
+                          });
+                        },
+                        controller: questController,
+                        decoration: InputDecoration(label: Text('Quest Name')),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 25,
+                    ),
+                    Text('Stages'),
+                    SizedBox(
+                      width: 300,
+                      child: TextFormField(
+                        controller: stageController,
+                        decoration: InputDecoration(label: Text('Stage Name')),
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          widget.quest.stages.add(Stage.forQuest(
+                              widget.quest.id, stageController.text));
+                          stageController.clear();
+                        });
+                      },
+                      child: const Text('Add Stage'),
+                    ),
+                    Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ListTile(
+                            leading: Icon(Icons.map),
+                            title: Text(widget.quest.name),
+                          ),
+                          ListView(
+                            shrinkWrap: true,
+                            children: [
+                              for (var stage in widget.quest.stages)
+                                Row(
+                                  children: [
+                                    IconButton.filled(
+                                        icon: Icon(Icons.arrow_upward),
+                                        onPressed: () {
+                                          {
+                                            setState(() => moveStageUp(stage));
+                                          }
+                                        }),
+                                    IconButton.filled(
+                                        icon: Icon(Icons.arrow_downward),
+                                        onPressed: () {
+                                          {
+                                            setState(
+                                                () => moveStageDown(stage));
+                                          }
+                                        }),
+                                    IconButton.filled(
+                                        icon: Icon(Icons.delete),
+                                        onPressed: () => {
+                                              setState(() => widget.quest.stages
+                                                  .remove(stage)),
+                                            }),
+                                    Flexible(
+                                      child: ListTile(
+                                        key: ValueKey(stage.id),
+                                        title: Text(stage.name),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                            ],
+                          )
+                        ])
+                  ],
+                )),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(
-                  width: 300,
-                  child: TextFormField(
-                    controller: questController,
-                    decoration: InputDecoration(label: Text('Quest Name')),
-                  ),
-                ),
                 ElevatedButton(
                   onPressed: () {
-                    setState(() {
-                      widget.quest.name = questController.text;
-                    });
-                  },
-                  child: const Text('Set Quest Name'),
-                ),
-                SizedBox(
-                  height: 25,
-                ),
-                Text('Stages'),
-                SizedBox(
-                  width: 300,
-                  child: TextFormField(
-                    controller: stageController,
-                    decoration: InputDecoration(label: Text('Stage Name')),
-                  ),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      widget.quest.stages
-                          .add(Stage.withName(stageController.text));
-                      stageController.clear();
-                    });
-                  },
-                  child: const Text('Add Stage'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      appState.saveQuest(widget.quest);
-                      questController.clear();
-                      stageController.clear();
-                      stages = <Stage>[];
-                    });
+                    appState.saveQuest(widget.quest);
                   },
                   child: const Text('Save Quest'),
                 ),
-                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  ListTile(
-                    leading: Icon(Icons.map),
-                    title: Text(widget.quest.name),
+                if (widget.editing)
+                  ElevatedButton(
+                    child: Text('Back to Quests'),
+                    onPressed: () {
+                      Navigator.maybePop(context);
+                    },
                   ),
-                  ListView(
-                    shrinkWrap: true,
-                    children: [
-                      for (var stage in widget.quest.stages)
-                        Row(
-                          children: [
-                            IconButton.filled(
-                                icon: Icon(Icons.arrow_upward),
-                                onPressed: () {
-                                  {
-                                    setState(() => moveStageUp(stage));
-                                  }
-                                }),
-                            IconButton.filled(
-                                icon: Icon(Icons.arrow_downward),
-                                onPressed: () {
-                                  {
-                                    setState(() => moveStageDown(stage));
-                                  }
-                                }),
-                            IconButton.filled(
-                                icon: Icon(Icons.delete),
-                                onPressed: () => {
-                                      setState(() =>
-                                          widget.quest.stages.remove(stage)),
-                                    }),
-                            Flexible(
-                              child: ListTile(
-                                key: ValueKey(stage.id),
-                                title: Text(stage.name),
-                              ),
-                            ),
-                          ],
-                        )
-                    ],
-                  )
-                ])
               ],
-            )),
+            )
+          ],
+        ),
       ),
     );
   }

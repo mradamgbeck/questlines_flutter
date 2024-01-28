@@ -1,15 +1,30 @@
+// ignore_for_file: prefer_typing_uninitialized_variables
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:questlines/state/app_state.dart';
 import 'package:questlines/widgets/quest_card.dart';
 
-class SelectedQuestPage extends StatelessWidget {
+class SelectedQuestPage extends StatefulWidget {
   const SelectedQuestPage({super.key});
 
   @override
+  State<SelectedQuestPage> createState() => _SelectedQuestPageState();
+}
+
+class _SelectedQuestPageState extends State<SelectedQuestPage> {
+  @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-    var selectedQuest = appState.getSelectedQuest();
+    late var selectedQuest;
+    init() {
+      setState(() {
+        selectedQuest = appState.getSelectedQuest();
+      });
+    }
+
+    init();
+
     return SingleChildScrollView(
       child: Center(
         child: Column(
@@ -17,7 +32,7 @@ class SelectedQuestPage extends StatelessWidget {
           children: <Widget>[
             selectedQuest != null
                 ? Column(
-                    children: [QuestCard(selectedQuest, false, false)],
+                    children: [QuestCard(selectedQuest, false, true)],
                   )
                 : Card(
                     child: Padding(

@@ -2,96 +2,139 @@
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:isar/isar.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:questlines/types/quest.dart';
 import 'package:questlines/types/stage.dart';
-import '../objectbox.g.dart';
 
 class MyAppState extends ChangeNotifier {
-  List<Quest> activeQuests = [];
-  List<Quest> completedQuests = [];
-  late Box questBox;
-  late Box stageBox;
+  bool isInitialized = false;
+  late Quest selectedQuest;
+  List activeQuests = [];
+  List completedQuests = [];
+  late Isar isar;
+  late IsarCollection<Quest> questCollection;
+  late IsarCollection<Stage> stageCollection;
 
-  setBoxes(Box questBox, Box stageBox) {
-    this.questBox = questBox;
-    this.stageBox = stageBox;
+  Future<void> init() async {
+    if (!isInitialized) {
+      List<Quest> allQuests = [];
+      List<Stage> allStages = [];
+      final dir = await getApplicationDocumentsDirectory();
+      isar = await Isar.open(
+        [QuestSchema, StageSchema],
+        directory: dir.path,
+      );
+      questCollection = isar.quests;
+      stageCollection = isar.stages;
+      await isar.txn(() async {
+        allQuests = await questCollection.where().findAll();
+      });
+      await isar.txn(() async {
+        allStages = await stageCollection.where().findAll();
+      });
+
+      for (var quest in allQuests) {
+        quest.stages =
+            allStages.where((stage) => stage.questId == quest.id).toList();
+
+        activeQuests = allQuests.where((quest) => !quest.complete).toList();
+        completedQuests = allQuests.where((quest) => quest.complete).toList();
+      }
+      selectedQuest = getSelectedQuest();
+      isInitialized = true;
+      notifyListeners();
+    }
   }
 
-  saveQuest(quest) {
+  saveQuest(quest) async {
     if (quest.stages.length == 0) {
-      var defaultStage = Stage.withName(quest.name);
+      var defaultStage = Stage.forQuest(quest.id, quest.name);
       defaultStage.selected = true;
       quest.stages.add(defaultStage);
     }
-    if (activeQuests.contains(quest.id)) {
+    if (activeQuests.contains(quest)) {
       activeQuests.remove(quest);
     }
-    questBox.put(quest);
-    for (var stage in quest.stages) {
-      stageBox.put(stage);
-    }
+    await isar.writeTxn(() async {
+      int questId = await questCollection.put(quest);
+      for (var stage in quest.stages) {
+        stage.questId = questId;
+        stageCollection.put(stage);
+      }
+    });
+
     activeQuests.add(quest);
     notifyListeners();
   }
 
-  completeQuest(completedQuest) {
+  completeQuest(completedQuest) async {
     completedQuest.complete = true;
     completedQuest.selected = false;
     completedQuests.add(completedQuest);
     activeQuests.removeWhere((quest) => quest.id == completedQuest.id);
-    questBox.put(completedQuest);
+    await isar.writeTxn(() async {
+      await questCollection.put(completedQuest);
+    });
     notifyListeners();
   }
 
-  selectQuest(id) {
-    Quest quest = questBox.get(id);
-    quest.selected = true;
-    questBox.put(quest);
-    activeQuests.firstWhere((quest) => quest.id == id).selected = true;
-    activeQuests.forEach((quest) => {
-          if (quest.id != id) {quest.selected = false}
+  toggleSelectQuest(selectedQuest) async {
+    selectedQuest.selected = !selectedQuest.selected;
+    await isar.writeTxn(() async {
+      await questCollection.put(selectedQuest);
+    });
+    activeQuests.forEach((activeQuest) => {
+          if (activeQuest.id != selectedQuest.id) {activeQuest.selected = false}
         });
     notifyListeners();
   }
 
   getSelectedQuest() {
-    Query query = questBox.query(Quest_.selected.equals(true)).build();
-    List selectedQuests = query.find();
-    query.close();
-    if (selectedQuests.isEmpty) {
-      return null;
-    }
-    return selectedQuests[0];
+    return activeQuests.firstWhereOrNull((quest) => quest.selected);
   }
 
-  completeStage(stage) {
-    Quest quest = stage.quest;
+  completeStage(stage) async {
+    Quest quest = activeQuests.firstWhere((quest) => quest.id == stage.questId);
     stage.complete = true;
-    stageBox.put(stage);
+    await isar.writeTxn(() async {
+      await stageCollection.put(stage);
+    });
     if (quest.isOnLastStage()) {
       completeQuest(quest);
+    } else {
+      quest.currentStage += 1;
     }
     notifyListeners();
   }
 
-  getSelectedStageForQuest(int id) {
-     Query query = stageBox.query(Stage_.quest.equals(id)).build();
-    List stages = query.find();
-    query.close();
-    return stages.firstWhere((stage) => stage.selected);
+  getSelectedStageForQuest(quest) {
+    return quest.stages.firstWhere((stage) => stage.selected);
   }
 
-  List getActiveQuests() {
-    Query query = questBox.query(Quest_.complete.equals(false)).build();
-    List selectedQuests = query.find();
-    query.close();
-    return selectedQuests;
+  void deleteActiveQuest(quest) {
+    if (quest.complete) {
+      completedQuests.remove(quest);
+    } else {
+      activeQuests.remove(quest);
+    }
+    isar.writeTxn(() => questCollection.delete(quest.id));
+    for (var stage in quest.stages) {
+      deleteStage(stage);
+    }
+    notifyListeners();
   }
 
-  List getCompletedQuests() {
-    Query query = questBox.query(Quest_.complete.equals(true)).build();
-    List selectedQuests = query.find();
-    query.close();
-    return selectedQuests;
+  void deleteStage(stage) {
+    isar.writeTxn(() => stageCollection.delete(stage.id));
+    notifyListeners();
+  }
+
+  void clearQuests() {
+    activeQuests = [];
+    completedQuests = [];
+    isar.writeTxn(() => questCollection.clear());
+    isar.writeTxn(() => stageCollection.clear());
+    notifyListeners();
   }
 }

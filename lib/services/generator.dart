@@ -11,7 +11,9 @@ generateQuest() {
   quest.name = getRandomVerbTheNoun();
   var rando = Random().nextInt(8) + 1;
   for (var i = 0; i < rando; i++) {
-    quest.stages.add(Stage.withName(getRandomVerbTheNoun()));
+    Stage stage = Stage.forQuest(quest.id, getRandomVerbTheNoun());
+    stage.questId = quest.id;
+    quest.stages.add(stage);
   }
   quest.stages[0].selected = true;
   return quest;

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:objectbox/objectbox.dart';
 import 'package:provider/provider.dart';
 import 'package:questlines/pages/active_quests_page.dart';
 import 'package:questlines/pages/debug_panel.dart';
@@ -7,16 +6,8 @@ import 'package:questlines/pages/completed_quests_page.dart';
 import 'package:questlines/pages/edit_quest_page.dart';
 import 'package:questlines/pages/selected_quest_page.dart';
 import 'package:questlines/state/app_state.dart';
-import 'package:questlines/state/object_box.dart';
 
-late ObjectBox objectBox;
-late Box questBox;
-late Box stageBox;
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  objectBox = await ObjectBox.create();
-  questBox = objectBox.questBox;
-  stageBox = objectBox.stageBox;
   runApp(const MyApp());
 }
 
@@ -51,7 +42,7 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-    appState.setBoxes(questBox, stageBox);
+    appState.init();
     Widget page;
     switch (selectedPage) {
       case 0:

@@ -12,10 +12,10 @@ class CompletedQuestsPage extends StatelessWidget {
     var appState = context.watch<MyAppState>();
 
     List<Widget> getQuestWidgets() {
-      List quests = appState.getCompletedQuests();
+      List quests = appState.completedQuests;
       if (quests.isNotEmpty) {
         return quests
-            .map<Widget>((quest) => QuestCard(quest, true, false))
+            .map<Widget>((quest) => QuestCard(quest, true, true))
             .toList();
       }
       return [

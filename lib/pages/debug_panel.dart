@@ -15,8 +15,7 @@ class DebugPanel extends StatelessWidget {
     }
 
     clearQuests() {
-      appState.activeQuests = [];
-      appState.completedQuests = [];
+      appState.clearQuests();
     }
 
     return ListView(

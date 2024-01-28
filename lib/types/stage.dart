@@ -1,15 +1,14 @@
-import 'package:objectbox/objectbox.dart';
-import 'package:questlines/types/quest.dart';
+import 'package:isar/isar.dart';
+part 'stage.g.dart';
 
-@Entity()
-class Stage {
-  int id;
+@collection
+ class Stage {
+  Id id = Isar.autoIncrement;
   String name = '';
-  @Property(type: PropertyType.date)
-  DateTime created = DateTime.now();
   bool selected = false;
   bool complete = false;
-  final quest = ToOne<Quest>();
-  Stage({this.id = 0});
-  Stage.withName(this.name, {this.id = 0});
+  int questId = 0;
+
+  Stage();
+  Stage.forQuest(this.questId, this.name);
 }

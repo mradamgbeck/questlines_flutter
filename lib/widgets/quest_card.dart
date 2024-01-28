@@ -17,7 +17,7 @@ class QuestCard extends StatelessWidget {
     var appState = context.watch<MyAppState>();
 
     ListTile getQuestTile() {
-      int selectedStage = appState.getSelectedStageForQuest(quest.id);
+      Stage selectedStage = quest.stages[quest.currentStage];
       return isListPage
           ? ListTile(
               leading: getQuestIcon(),
@@ -41,20 +41,23 @@ class QuestCard extends StatelessWidget {
     List<Widget> getOptionButtons() {
       return !displayOnly
           ? <Widget>[
-              if (!quest.complete && !quest.selected)
-                TextButton(
-                  child: const Text('Select'),
-                  onPressed: () => {appState.selectQuest(quest.id)},
-                ),
-              const SizedBox(width: 8),
-              if (!quest.complete)
-                TextButton(
-                  child: const Text('Edit'),
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => EditQuestPage.withQuest(quest)));
-                  },
-                ),
+              IconButton(
+                icon: Icon(quest.selected ? Icons.check_circle : Icons.add_box),
+                onPressed: () => {appState.toggleSelectQuest(quest)},
+              ),
+              IconButton(
+                icon: Icon(Icons.edit),
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => EditQuestPage.withQuest(quest)));
+                },
+              ),
+              IconButton(
+                onPressed: () {
+                  appState.deleteActiveQuest(quest);
+                },
+                icon: Icon(Icons.delete),
+              ),
               const SizedBox(width: 8),
             ]
           : <Widget>[];

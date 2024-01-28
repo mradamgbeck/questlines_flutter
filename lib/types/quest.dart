@@ -1,20 +1,21 @@
-import 'package:objectbox/objectbox.dart';
 import 'package:questlines/types/stage.dart';
+import 'package:isar/isar.dart';
+part 'quest.g.dart';
 
-@Entity()
+@collection
 class Quest {
-  int id;
+  Id id = Isar.autoIncrement;
   String name = '';
-  @Property(type: PropertyType.date)
-  DateTime created = DateTime.now();
   bool selected = false;
   bool complete = false;
-  @Backlink()
-  final stages = ToMany<Stage>();
-  Quest({this.id = 0});
+  @ignore
+  List<Stage> stages = [];
+  int currentStage = 0;
+
+  Quest();
+  Quest.withName(this.name);
 
   isOnLastStage() {
-    return stages.indexWhere((element) => element.selected) ==
-        stages.length - 1;
+    return currentStage == stages.length - 1;
   }
 }
