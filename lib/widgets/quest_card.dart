@@ -16,14 +16,16 @@ class QuestCard extends StatelessWidget {
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
 
-    ListTile getQuestTile() {
+    getQuestTile() {
       Stage selectedStage = quest.stages[quest.currentStage];
       return isListPage
           ? ListTile(
+              titleAlignment: ListTileTitleAlignment.center,
               leading: getQuestIcon(),
               title: Text(quest.name),
             )
           : ListTile(
+              titleAlignment: ListTileTitleAlignment.center,
               leading: getQuestIcon(),
               title: Text(quest.name),
               subtitle: Row(
@@ -42,7 +44,7 @@ class QuestCard extends StatelessWidget {
       return !displayOnly
           ? <Widget>[
               IconButton(
-                icon: Icon(quest.selected ? Icons.check_circle : Icons.add_box),
+                icon: Icon(quest.selected ? Icons.nightlight : Icons.explore),
                 onPressed: () => {appState.toggleSelectQuest(quest)},
               ),
               IconButton(
@@ -89,5 +91,9 @@ class QuestCard extends StatelessWidget {
     );
   }
 
-  Icon getQuestIcon() => quest.complete ? Icon(Icons.done) : Icon(Icons.map);
+  Icon getQuestIcon() => quest.complete
+      ? Icon(Icons.done)
+      : quest.selected
+          ? Icon(Icons.explore)
+          : Icon(Icons.nightlight);
 }
