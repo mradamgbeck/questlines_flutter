@@ -79,13 +79,14 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  toggleSelectQuest(selectedQuest) async {
-    selectedQuest.selected = !selectedQuest.selected;
+  toggleSelectQuest(questToToggle) async {
+    questToToggle.selected = !questToToggle.selected;
     await isar.writeTxn(() async {
-      await questCollection.put(selectedQuest);
+      await questCollection.put(questToToggle);
     });
     activeQuests.forEach((activeQuest) => {
-          if (activeQuest.id != selectedQuest.id) {activeQuest.selected = false}
+          if (activeQuest.id != questToToggle.id)
+            {activeQuest.selected = false, saveQuest(activeQuest)},
         });
     notifyListeners();
   }
@@ -141,7 +142,7 @@ class MyAppState extends ChangeNotifier {
   }
 
   List getActiveQuestsSorted() {
-    activeQuests.sort((a,b) => a.created.compareTo(b.created));
+    activeQuests.sort((a, b) => a.created.compareTo(b.created));
     return activeQuests;
   }
 }
