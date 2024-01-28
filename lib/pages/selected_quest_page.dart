@@ -16,14 +16,7 @@ class _SelectedQuestPageState extends State<SelectedQuestPage> {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-    late var selectedQuest;
-    init() {
-      setState(() {
-        selectedQuest = appState.getSelectedQuest();
-      });
-    }
-
-    init();
+    late var selectedQuest = appState.getSelectedQuest();
 
     return SingleChildScrollView(
       child: Center(

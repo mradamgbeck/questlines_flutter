@@ -95,7 +95,8 @@ class MyAppState extends ChangeNotifier {
   }
 
   completeStage(stage) async {
-    Quest quest = activeQuests.firstWhere((quest) => quest.id == stage.questId);
+    Quest quest =
+        activeQuests.firstWhere((element) => element.id == stage.questId);
     stage.complete = true;
     await isar.writeTxn(() async {
       await stageCollection.put(stage);
@@ -105,6 +106,7 @@ class MyAppState extends ChangeNotifier {
     } else {
       quest.currentStage += 1;
     }
+    saveQuest(quest);
     notifyListeners();
   }
 
