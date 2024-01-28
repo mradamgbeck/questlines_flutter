@@ -105,8 +105,8 @@ class MyAppState extends ChangeNotifier {
       completeQuest(quest);
     } else {
       quest.currentStage += 1;
+      saveQuest(quest);
     }
-    saveQuest(quest);
     notifyListeners();
   }
 

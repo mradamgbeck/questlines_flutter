@@ -86,7 +86,7 @@ class _MainPageState extends State<MainPage> {
               ),
               NavigationDestination(
                 icon: Icon(Icons.bug_report),
-                label: 'Debug Panel',
+                label: 'Debug',
               ),
             ],
             selectedIndex: selectedPage,
