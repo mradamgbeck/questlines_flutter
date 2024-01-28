@@ -82,6 +82,9 @@ class QuestCard extends StatelessWidget {
                   )
                 ],
               ),
+          SizedBox(
+            height: 15,
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: getOptionButtons(),

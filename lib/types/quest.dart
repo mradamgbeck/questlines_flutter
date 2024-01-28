@@ -8,6 +8,7 @@ class Quest {
   String name = '';
   bool selected = false;
   bool complete = false;
+  int created = DateTime.timestamp().millisecondsSinceEpoch;
   @ignore
   List<Stage> stages = [];
   int currentStage = 0;

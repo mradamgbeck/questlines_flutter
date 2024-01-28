@@ -139,4 +139,9 @@ class MyAppState extends ChangeNotifier {
     isar.writeTxn(() => stageCollection.clear());
     notifyListeners();
   }
+
+  List getActiveQuestsSorted() {
+    activeQuests.sort((a,b) => a.created.compareTo(b.created));
+    return activeQuests;
+  }
 }

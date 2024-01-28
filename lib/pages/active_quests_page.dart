@@ -13,7 +13,7 @@ class ActiveQuestsPage extends StatelessWidget {
     var appState = context.watch<MyAppState>();
 
     List<Widget> getQuestWidgets() {
-      List quests = appState.activeQuests;
+      List quests = appState.getActiveQuestsSorted();
       if (quests.isNotEmpty) {
         return quests
             .map<Widget>((quest) => QuestCard(quest, true, false))
