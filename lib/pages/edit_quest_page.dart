@@ -1,5 +1,7 @@
 // ignore_for_file: must_be_immutable
 
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:questlines/state/app_state.dart';
@@ -21,11 +23,11 @@ class _EditQuestPageState extends State<EditQuestPage> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController questController = TextEditingController();
   TextEditingController stageController = TextEditingController();
-  var stages = <Stage>[];
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
     questController.text = widget.quest.name;
+    DateTime? stageDeadline;
 
     moveStageUp(stage) {
       int index = widget.quest.stages.indexOf(stage);
@@ -43,6 +45,20 @@ class _EditQuestPageState extends State<EditQuestPage> {
         widget.quest.stages.removeAt(index + 1);
         widget.quest.stages.insert(index, temp);
       }
+    }
+
+    pickDeadlineDate() async {
+      stageDeadline = await showDatePicker(
+          context: context,
+          firstDate: DateTime.now(),
+          lastDate: DateTime.fromMillisecondsSinceEpoch(8640000000000000));
+    }
+
+    pickDeadlineTime() async {
+      var time =
+          await showTimePicker(context: context, initialTime: TimeOfDay.now());
+      stageDeadline = DateTime(stageDeadline!.year, stageDeadline!.month,
+          stageDeadline!.day, time!.hour, time.minute);
     }
 
     return Scaffold(
@@ -77,15 +93,38 @@ class _EditQuestPageState extends State<EditQuestPage> {
                         decoration: InputDecoration(label: Text('Stage Name')),
                       ),
                     ),
-                    ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          widget.quest.stages.add(Stage.forQuest(
-                              widget.quest.id, stageController.text));
-                          stageController.clear();
-                        });
-                      },
-                      child: const Text('Add Stage'),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            pickDeadlineDate();
+                          },
+                          child: const Icon(Icons.date_range),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            pickDeadlineTime();
+                          },
+                          child: const Icon(Icons.timer),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              Stage stage = Stage.forQuest(
+                                  widget.quest.id, stageController.text);
+                              if (stageDeadline != null) {
+                                stage.deadline = stageDeadline;
+                              }
+                              widget.quest.stages.add(stage);
+                              widget.quest.stages[widget.quest.currentStage]
+                                  .selected = true;
+                              stageController.clear();
+                            });
+                          },
+                          child: const Text('Add Stage'),
+                        ),
+                      ],
                     ),
                     Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -124,7 +163,13 @@ class _EditQuestPageState extends State<EditQuestPage> {
                                     Flexible(
                                       child: ListTile(
                                         key: ValueKey(stage.id),
-                                        title: Text(stage.name),
+                                        title: Column(
+                                          children: [
+                                            Text(stage.name),
+                                            if (stage.deadline != null)
+                                              Text(stage.getDeadline()),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ],

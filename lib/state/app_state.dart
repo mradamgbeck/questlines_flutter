@@ -8,8 +8,7 @@ import 'package:questlines/types/quest.dart';
 import 'package:questlines/types/stage.dart';
 
 class MyAppState extends ChangeNotifier {
-  bool isInitialized = false;
-  late Quest selectedQuest;
+  late Quest? selectedQuest;
   List activeQuests = [];
   List completedQuests = [];
   late Isar isar;
@@ -17,34 +16,31 @@ class MyAppState extends ChangeNotifier {
   late IsarCollection<Stage> stageCollection;
 
   Future<void> init() async {
-    if (!isInitialized) {
-      List<Quest> allQuests = [];
-      List<Stage> allStages = [];
-      final dir = await getApplicationDocumentsDirectory();
-      isar = await Isar.open(
-        [QuestSchema, StageSchema],
-        directory: dir.path,
-      );
-      questCollection = isar.quests;
-      stageCollection = isar.stages;
-      await isar.txn(() async {
-        allQuests = await questCollection.where().findAll();
-      });
-      await isar.txn(() async {
-        allStages = await stageCollection.where().findAll();
-      });
+    List<Quest> allQuests = [];
+    List<Stage> allStages = [];
+    final dir = await getApplicationDocumentsDirectory();
+    isar = await Isar.open(
+      [QuestSchema, StageSchema],
+      directory: dir.path,
+    );
+    questCollection = isar.quests;
+    stageCollection = isar.stages;
+    await isar.txn(() async {
+      allQuests = await questCollection.where().findAll();
+    });
+    await isar.txn(() async {
+      allStages = await stageCollection.where().findAll();
+    });
 
-      for (var quest in allQuests) {
-        quest.stages =
-            allStages.where((stage) => stage.questId == quest.id).toList();
+    for (var quest in allQuests) {
+      quest.stages =
+          allStages.where((stage) => stage.questId == quest.id).toList();
 
-        activeQuests = allQuests.where((quest) => !quest.complete).toList();
-        completedQuests = allQuests.where((quest) => quest.complete).toList();
-      }
-      selectedQuest = getSelectedQuest();
-      isInitialized = true;
-      notifyListeners();
+      activeQuests = allQuests.where((quest) => !quest.complete).toList();
+      completedQuests = allQuests.where((quest) => quest.complete).toList();
     }
+    selectedQuest = getSelectedQuest();
+    notifyListeners();
   }
 
   saveQuest(quest) async {
@@ -99,6 +95,7 @@ class MyAppState extends ChangeNotifier {
     Quest quest =
         activeQuests.firstWhere((element) => element.id == stage.questId);
     stage.complete = true;
+    stage.selected = false;
     await isar.writeTxn(() async {
       await stageCollection.put(stage);
     });
@@ -106,6 +103,7 @@ class MyAppState extends ChangeNotifier {
       completeQuest(quest);
     } else {
       quest.currentStage += 1;
+      quest.stages[quest.currentStage].selected = true;
       saveQuest(quest);
     }
     notifyListeners();

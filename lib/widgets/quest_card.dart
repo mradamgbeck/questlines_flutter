@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_literals_to_create_immutables
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:questlines/pages/edit_quest_page.dart';
@@ -15,30 +17,59 @@ class QuestCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
+    Stage selectedStage = quest.stages[quest.currentStage];
 
-    getQuestTile() {
-      Stage selectedStage = quest.stages[quest.currentStage];
-      return isListPage
-          ? ListTile(
-              titleAlignment: ListTileTitleAlignment.center,
-              leading: getQuestIcon(),
-              title: Text(quest.name),
-            )
-          : ListTile(
-              titleAlignment: ListTileTitleAlignment.center,
-              leading: getQuestIcon(),
-              title: Text(quest.name),
-              subtitle: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+    Icon getIcon(thing) => thing.complete
+        ? Icon(Icons.done)
+        : thing.selected
+            ? Icon(Icons.explore)
+            : Icon(Icons.nightlight);
+
+    Column getStagesWidgets() => Column(
+          children: [
+            if (isListPage)
+              for (var stage in quest.stages)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      getIcon(stage),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                        child: Column(
+                          children: [
+                            Text(stage.name),
+                            if (stage.deadline != null)
+                              Text('${stage.getRemainingTime()} remain')
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                )
+            else
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(selectedStage.name),
+                  getIcon(selectedStage),
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Column(
+                      children: [
+                        Text(selectedStage.name),
+                        if (selectedStage.deadline != null)
+                          Text('${selectedStage.getRemainingTime()} remain')
+                      ],
+                    ),
+                  ),
                   TextButton(
-                    child: Text('Done'),
-                    onPressed: () => {appState.completeStage(selectedStage)},
-                  )
+                      onPressed: () => {appState.completeStage(selectedStage)},
+                      child: Text("done"))
                 ],
-              ));
-    }
+              )
+          ],
+        );
 
     List<Widget> getOptionButtons() {
       return !displayOnly
@@ -65,38 +96,25 @@ class QuestCard extends StatelessWidget {
           : <Widget>[];
     }
 
-    return Card(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          getQuestTile(),
-          if (isListPage)
-            for (var stage in quest.stages)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  stage.complete ? Icon(Icons.done) : Icon(Icons.arrow_right),
-                  Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: Text(stage.name),
-                  )
-                ],
-              ),
-          SizedBox(
-            height: 15,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: getOptionButtons(),
-          ),
-        ],
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(5, 5, 5, 0),
+      child: Card(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            ListTile(
+              titleAlignment: ListTileTitleAlignment.center,
+              leading: getIcon(quest),
+              title: Text(quest.name),
+            ),
+            getStagesWidgets(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: getOptionButtons(),
+            ),
+          ],
+        ),
       ),
     );
   }
-
-  Icon getQuestIcon() => quest.complete
-      ? Icon(Icons.done)
-      : quest.selected
-          ? Icon(Icons.explore)
-          : Icon(Icons.nightlight);
 }

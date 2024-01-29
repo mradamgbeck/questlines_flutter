@@ -9,10 +9,15 @@ var wordGen = WordGenerator();
 generateQuest() {
   var quest = Quest();
   quest.name = getRandomVerbTheNoun();
-  var rando = Random().nextInt(8) + 1;
-  for (var i = 0; i < rando; i++) {
+  var stageAmount = Random().nextInt(8) + 1;
+  for (var i = 0; i < stageAmount; i++) {
     Stage stage = Stage.forQuest(quest.id, getRandomVerbTheNoun());
     stage.questId = quest.id;
+    if (Random().nextBool()) {
+      var maxDate = 2147501647000;
+      var millis = maxDate - 100 * Random().nextInt(4294967296);
+      stage.deadline = DateTime.fromMillisecondsSinceEpoch(millis);
+    }
     quest.stages.add(stage);
   }
   quest.stages[0].selected = true;

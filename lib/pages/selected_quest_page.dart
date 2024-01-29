@@ -1,8 +1,9 @@
-// ignore_for_file: prefer_typing_uninitialized_variables
+// ignore_for_file: prefer_typing_uninitialized_variables, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:questlines/state/app_state.dart';
+import 'package:questlines/widgets/no_quests_card.dart';
 import 'package:questlines/widgets/quest_card.dart';
 
 class SelectedQuestPage extends StatefulWidget {
@@ -18,23 +19,16 @@ class _SelectedQuestPageState extends State<SelectedQuestPage> {
     var appState = context.watch<MyAppState>();
     late var selectedQuest = appState.getSelectedQuest();
 
-    return SingleChildScrollView(
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            selectedQuest != null
-                ? Column(
-                    children: [QuestCard(selectedQuest, false, true)],
-                  )
-                : Card(
-                    child: Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text('No Quests, M\'Lord!'),
-                  )),
-          ],
-        ),
-      ),
-    );
+    return selectedQuest != null
+        ? Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [QuestCard(selectedQuest, false, true)],
+            ),
+          )
+        : Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [NoQuestsCard()]);
   }
 }

@@ -18,7 +18,8 @@ class DebugPanel extends StatelessWidget {
       appState.clearQuests();
     }
 
-    return ListView(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         ElevatedButton(onPressed: addQuest, child: const Text('Add Quest')),
         ElevatedButton(

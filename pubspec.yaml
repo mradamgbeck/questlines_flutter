@@ -18,6 +18,7 @@ dependencies:
   hive: ^2.2.3
   isar: ^3.1.0+1
   isar_flutter_libs: ^3.1.0+1
+  intl: ^0.17.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -1,14 +1,15 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:questlines/pages/active_quests_page.dart';
 import 'package:questlines/pages/debug_panel.dart';
-import 'package:questlines/pages/completed_quests_page.dart';
+import 'package:questlines/pages/quest_list_page.dart';
 import 'package:questlines/pages/edit_quest_page.dart';
 import 'package:questlines/pages/selected_quest_page.dart';
 import 'package:questlines/state/app_state.dart';
 
 Future<void> main() async {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -22,13 +23,14 @@ class MyApp extends StatelessWidget {
           title: 'Questlines',
           theme: ThemeData(
               useMaterial3: true, colorScheme: const ColorScheme.dark()),
-          home: const MainPage(title: 'QUESTLINES'),
+          home: MainPage(title: 'QUESTLINES'),
         ));
   }
 }
 
 class MainPage extends StatefulWidget {
-  const MainPage({super.key, required this.title});
+  MainPage({super.key, required this.title});
+  bool isInitialized = false;
 
   final String title;
 
@@ -42,15 +44,18 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-    appState.init();
+    if (!widget.isInitialized) {
+      appState.init();
+      widget.isInitialized = true;
+    }
     Widget page;
     switch (selectedPage) {
       case 0:
         page = SelectedQuestPage();
       case 1:
-        page = ActiveQuestsPage();
+        page = QuestListPage(appState.getActiveQuestsSorted(), false);
       case 2:
-        page = CompletedQuestsPage();
+        page = QuestListPage(appState.completedQuests, true);
       case 3:
         page = EditQuestPage();
       case 4:
