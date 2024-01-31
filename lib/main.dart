@@ -1,5 +1,3 @@
-// ignore_for_file: must_be_immutable
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:questlines/pages/debug_panel.dart';
@@ -8,7 +6,7 @@ import 'package:questlines/pages/edit_quest_page.dart';
 import 'package:questlines/pages/selected_quest_page.dart';
 import 'package:questlines/state/app_state.dart';
 
-Future<void> main() async {
+main() async {
   runApp(MyApp());
 }
 
@@ -29,8 +27,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MainPage extends StatefulWidget {
-  MainPage({super.key, required this.title});
-  bool isInitialized = false;
+  const MainPage({super.key, required this.title});
 
   final String title;
 
@@ -44,10 +41,8 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-    if (!widget.isInitialized) {
-      appState.init();
-      widget.isInitialized = true;
-    }
+    appState.init();
+
     Widget page;
     switch (selectedPage) {
       case 0:

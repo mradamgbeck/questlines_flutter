@@ -15,32 +15,37 @@ class MyAppState extends ChangeNotifier {
   late IsarCollection<Quest> questCollection;
   late IsarCollection<Stage> stageCollection;
 
+  bool isInitialized = false;
+
   Future<void> init() async {
-    List<Quest> allQuests = [];
-    List<Stage> allStages = [];
-    final dir = await getApplicationDocumentsDirectory();
-    isar = await Isar.open(
-      [QuestSchema, StageSchema],
-      directory: dir.path,
-    );
-    questCollection = isar.quests;
-    stageCollection = isar.stages;
-    await isar.txn(() async {
-      allQuests = await questCollection.where().findAll();
-    });
-    await isar.txn(() async {
-      allStages = await stageCollection.where().findAll();
-    });
+    if (!isInitialized) {
+      List<Quest> allQuests = [];
+      List<Stage> allStages = [];
+      final dir = await getApplicationDocumentsDirectory();
+      isar = await Isar.open(
+        [QuestSchema, StageSchema],
+        directory: dir.path,
+      );
+      questCollection = isar.quests;
+      stageCollection = isar.stages;
+      await isar.txn(() async {
+        allQuests = await questCollection.where().findAll();
+      });
+      await isar.txn(() async {
+        allStages = await stageCollection.where().findAll();
+      });
 
-    for (var quest in allQuests) {
-      quest.stages =
-          allStages.where((stage) => stage.questId == quest.id).toList();
+      for (var quest in allQuests) {
+        quest.stages =
+            allStages.where((stage) => stage.questId == quest.id).toList();
 
-      activeQuests = allQuests.where((quest) => !quest.complete).toList();
-      completedQuests = allQuests.where((quest) => quest.complete).toList();
+        activeQuests = allQuests.where((quest) => !quest.complete).toList();
+        completedQuests = allQuests.where((quest) => quest.complete).toList();
+      }
+      selectedQuest = getSelectedQuest();
+      notifyListeners();
+      isInitialized = true;
     }
-    selectedQuest = getSelectedQuest();
-    notifyListeners();
   }
 
   saveQuest(quest) async {
