@@ -114,10 +114,6 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  getSelectedStageForQuest(quest) {
-    return quest.stages.firstWhere((stage) => stage.selected);
-  }
-
   void deleteActiveQuest(quest) {
     if (quest.complete) {
       completedQuests.remove(quest);

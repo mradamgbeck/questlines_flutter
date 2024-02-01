@@ -22,18 +22,23 @@ const QuestSchema = CollectionSchema(
       name: r'complete',
       type: IsarType.bool,
     ),
-    r'currentStage': PropertySchema(
+    r'created': PropertySchema(
       id: 1,
+      name: r'created',
+      type: IsarType.long,
+    ),
+    r'currentStage': PropertySchema(
+      id: 2,
       name: r'currentStage',
       type: IsarType.long,
     ),
     r'name': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'name',
       type: IsarType.string,
     ),
     r'selected': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'selected',
       type: IsarType.bool,
     )
@@ -69,9 +74,10 @@ void _questSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeBool(offsets[0], object.complete);
-  writer.writeLong(offsets[1], object.currentStage);
-  writer.writeString(offsets[2], object.name);
-  writer.writeBool(offsets[3], object.selected);
+  writer.writeLong(offsets[1], object.created);
+  writer.writeLong(offsets[2], object.currentStage);
+  writer.writeString(offsets[3], object.name);
+  writer.writeBool(offsets[4], object.selected);
 }
 
 Quest _questDeserialize(
@@ -82,10 +88,11 @@ Quest _questDeserialize(
 ) {
   final object = Quest();
   object.complete = reader.readBool(offsets[0]);
-  object.currentStage = reader.readLong(offsets[1]);
+  object.created = reader.readLong(offsets[1]);
+  object.currentStage = reader.readLong(offsets[2]);
   object.id = id;
-  object.name = reader.readString(offsets[2]);
-  object.selected = reader.readBool(offsets[3]);
+  object.name = reader.readString(offsets[3]);
+  object.selected = reader.readBool(offsets[4]);
   return object;
 }
 
@@ -101,8 +108,10 @@ P _questDeserializeProp<P>(
     case 1:
       return (reader.readLong(offset)) as P;
     case 2:
-      return (reader.readString(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 3:
+      return (reader.readString(offset)) as P;
+    case 4:
       return (reader.readBool(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -203,6 +212,58 @@ extension QuestQueryFilter on QueryBuilder<Quest, Quest, QFilterCondition> {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'complete',
         value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Quest, Quest, QAfterFilterCondition> createdEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'created',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Quest, Quest, QAfterFilterCondition> createdGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'created',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Quest, Quest, QAfterFilterCondition> createdLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'created',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Quest, Quest, QAfterFilterCondition> createdBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'created',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
       ));
     });
   }
@@ -468,6 +529,18 @@ extension QuestQuerySortBy on QueryBuilder<Quest, Quest, QSortBy> {
     });
   }
 
+  QueryBuilder<Quest, Quest, QAfterSortBy> sortByCreated() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'created', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Quest, Quest, QAfterSortBy> sortByCreatedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'created', Sort.desc);
+    });
+  }
+
   QueryBuilder<Quest, Quest, QAfterSortBy> sortByCurrentStage() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'currentStage', Sort.asc);
@@ -515,6 +588,18 @@ extension QuestQuerySortThenBy on QueryBuilder<Quest, Quest, QSortThenBy> {
   QueryBuilder<Quest, Quest, QAfterSortBy> thenByCompleteDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'complete', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Quest, Quest, QAfterSortBy> thenByCreated() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'created', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Quest, Quest, QAfterSortBy> thenByCreatedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'created', Sort.desc);
     });
   }
 
@@ -574,6 +659,12 @@ extension QuestQueryWhereDistinct on QueryBuilder<Quest, Quest, QDistinct> {
     });
   }
 
+  QueryBuilder<Quest, Quest, QDistinct> distinctByCreated() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'created');
+    });
+  }
+
   QueryBuilder<Quest, Quest, QDistinct> distinctByCurrentStage() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'currentStage');
@@ -604,6 +695,12 @@ extension QuestQueryProperty on QueryBuilder<Quest, Quest, QQueryProperty> {
   QueryBuilder<Quest, bool, QQueryOperations> completeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'complete');
+    });
+  }
+
+  QueryBuilder<Quest, int, QQueryOperations> createdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'created');
     });
   }
 

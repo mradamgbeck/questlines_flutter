@@ -22,18 +22,23 @@ const StageSchema = CollectionSchema(
       name: r'complete',
       type: IsarType.bool,
     ),
-    r'name': PropertySchema(
+    r'deadline': PropertySchema(
       id: 1,
+      name: r'deadline',
+      type: IsarType.dateTime,
+    ),
+    r'name': PropertySchema(
+      id: 2,
       name: r'name',
       type: IsarType.string,
     ),
     r'questId': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'questId',
       type: IsarType.long,
     ),
     r'selected': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'selected',
       type: IsarType.bool,
     )
@@ -69,9 +74,10 @@ void _stageSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeBool(offsets[0], object.complete);
-  writer.writeString(offsets[1], object.name);
-  writer.writeLong(offsets[2], object.questId);
-  writer.writeBool(offsets[3], object.selected);
+  writer.writeDateTime(offsets[1], object.deadline);
+  writer.writeString(offsets[2], object.name);
+  writer.writeLong(offsets[3], object.questId);
+  writer.writeBool(offsets[4], object.selected);
 }
 
 Stage _stageDeserialize(
@@ -82,10 +88,11 @@ Stage _stageDeserialize(
 ) {
   final object = Stage();
   object.complete = reader.readBool(offsets[0]);
+  object.deadline = reader.readDateTimeOrNull(offsets[1]);
   object.id = id;
-  object.name = reader.readString(offsets[1]);
-  object.questId = reader.readLong(offsets[2]);
-  object.selected = reader.readBool(offsets[3]);
+  object.name = reader.readString(offsets[2]);
+  object.questId = reader.readLong(offsets[3]);
+  object.selected = reader.readBool(offsets[4]);
   return object;
 }
 
@@ -99,10 +106,12 @@ P _stageDeserializeProp<P>(
     case 0:
       return (reader.readBool(offset)) as P;
     case 1:
-      return (reader.readString(offset)) as P;
+      return (reader.readDateTimeOrNull(offset)) as P;
     case 2:
-      return (reader.readLong(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 3:
+      return (reader.readLong(offset)) as P;
+    case 4:
       return (reader.readBool(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -203,6 +212,75 @@ extension StageQueryFilter on QueryBuilder<Stage, Stage, QFilterCondition> {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'complete',
         value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Stage, Stage, QAfterFilterCondition> deadlineIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'deadline',
+      ));
+    });
+  }
+
+  QueryBuilder<Stage, Stage, QAfterFilterCondition> deadlineIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'deadline',
+      ));
+    });
+  }
+
+  QueryBuilder<Stage, Stage, QAfterFilterCondition> deadlineEqualTo(
+      DateTime? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'deadline',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Stage, Stage, QAfterFilterCondition> deadlineGreaterThan(
+    DateTime? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'deadline',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Stage, Stage, QAfterFilterCondition> deadlineLessThan(
+    DateTime? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'deadline',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Stage, Stage, QAfterFilterCondition> deadlineBetween(
+    DateTime? lower,
+    DateTime? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'deadline',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
       ));
     });
   }
@@ -467,6 +545,18 @@ extension StageQuerySortBy on QueryBuilder<Stage, Stage, QSortBy> {
     });
   }
 
+  QueryBuilder<Stage, Stage, QAfterSortBy> sortByDeadline() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'deadline', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Stage, Stage, QAfterSortBy> sortByDeadlineDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'deadline', Sort.desc);
+    });
+  }
+
   QueryBuilder<Stage, Stage, QAfterSortBy> sortByName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.asc);
@@ -514,6 +604,18 @@ extension StageQuerySortThenBy on QueryBuilder<Stage, Stage, QSortThenBy> {
   QueryBuilder<Stage, Stage, QAfterSortBy> thenByCompleteDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'complete', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Stage, Stage, QAfterSortBy> thenByDeadline() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'deadline', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Stage, Stage, QAfterSortBy> thenByDeadlineDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'deadline', Sort.desc);
     });
   }
 
@@ -573,6 +675,12 @@ extension StageQueryWhereDistinct on QueryBuilder<Stage, Stage, QDistinct> {
     });
   }
 
+  QueryBuilder<Stage, Stage, QDistinct> distinctByDeadline() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'deadline');
+    });
+  }
+
   QueryBuilder<Stage, Stage, QDistinct> distinctByName(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -603,6 +711,12 @@ extension StageQueryProperty on QueryBuilder<Stage, Stage, QQueryProperty> {
   QueryBuilder<Stage, bool, QQueryOperations> completeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'complete');
+    });
+  }
+
+  QueryBuilder<Stage, DateTime?, QQueryOperations> deadlineProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'deadline');
     });
   }
 
