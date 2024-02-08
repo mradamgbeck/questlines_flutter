@@ -29,7 +29,7 @@ class _EditQuestPageState extends State<EditQuestPage> {
   Widget build(BuildContext context) {
     questController.text = widget.quest.name;
     if(widget.quest.stages.isNotEmpty){
-      stages = widget.quest.stages.toList();
+      stages = widget.quest.getStagesSorted();
     }
     DateTime? stageDeadline;
 
@@ -53,6 +53,7 @@ class _EditQuestPageState extends State<EditQuestPage> {
       }
       selectFirstStage();
       getPrioritiesInOrder();
+      
     }
 
     moveStageDown(stageToMoveDown) {
@@ -206,9 +207,10 @@ class _EditQuestPageState extends State<EditQuestPage> {
                   onPressed: () {
                     setState(() {
                       widget.quest.stages.addAll(stages);
+                      widget.db.saveStages(stages);
+                      widget.db.saveQuest(widget.quest);
                       stages = [];
                       questController.clear();
-                      widget.db.saveQuest(widget.quest);
                     });
                   },
                   child: const Text('Save Quest'),
