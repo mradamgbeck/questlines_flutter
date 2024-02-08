@@ -28,6 +28,9 @@ class _EditQuestPageState extends State<EditQuestPage> {
   @override
   Widget build(BuildContext context) {
     questController.text = widget.quest.name;
+    if(widget.quest.stages.isNotEmpty){
+      stages = widget.quest.stages.toList();
+    }
     DateTime? stageDeadline;
 
     selectFirstStage() {
