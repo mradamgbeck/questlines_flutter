@@ -5,18 +5,31 @@ part 'quest.g.dart';
 @collection
 class Quest {
   Id id = Isar.autoIncrement;
+  @Index(unique: true)
   String name = '';
+
   bool selected = false;
   bool complete = false;
+
+  @Index()
   int created = DateTime.timestamp().millisecondsSinceEpoch;
-  @ignore
-  List<Stage> stages = [];
-  int currentStage = 0;
+
+  @Backlink(to: 'quest')
+  final stages = IsarLinks<Stage>();
 
   Quest();
-  Quest.withName(this.name);
 
-  isOnLastStage() {
-    return currentStage == stages.length - 1;
+  bool isOnLastStage() {
+    return getStagesSorted()
+        .indexWhere((stage) => stage.selected) ==
+        stages.length - 1;
+  }
+
+  Stage getCurrentStage() {
+    return stages.toList().firstWhere((stage) => stage.selected);
+  }
+
+  List<Stage> getStagesSorted() {
+    return stages.toList()..sort((a, b) => a.priority.compareTo(b.priority));
   }
 }

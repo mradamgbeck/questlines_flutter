@@ -1,17 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:questlines/pages/active_quest_page.dart';
+import 'package:questlines/pages/completed_quest_page.dart';
 import 'package:questlines/pages/debug_panel.dart';
-import 'package:questlines/pages/quest_list_page.dart';
 import 'package:questlines/pages/edit_quest_page.dart';
 import 'package:questlines/pages/selected_quest_page.dart';
 import 'package:questlines/state/app_state.dart';
+import 'package:questlines/state/database.dart';
 
 main() async {
-  runApp(MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final Database db = Database();
+  runApp(MyApp(
+    db: db,
+  ));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final Database db;
+  const MyApp({super.key, required this.db});
 
   @override
   Widget build(BuildContext context) {
@@ -21,15 +29,15 @@ class MyApp extends StatelessWidget {
           title: 'Questlines',
           theme: ThemeData(
               useMaterial3: true, colorScheme: const ColorScheme.dark()),
-          home: MainPage(title: 'QUESTLINES'),
+          home: MainPage(title: 'QUESTLINES', db: db),
         ));
   }
 }
 
 class MainPage extends StatefulWidget {
-  const MainPage({super.key, required this.title});
-
+  const MainPage({super.key, required this.title, required this.db});
   final String title;
+  final Database db;
 
   @override
   State<MainPage> createState() => _MainPageState();
@@ -40,21 +48,18 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    var appState = context.watch<MyAppState>();
-    appState.init();
-
     Widget page;
     switch (selectedPage) {
       case 0:
-        page = SelectedQuestPage();
+        page = SelectedQuestPage(widget.db);
       case 1:
-        page = QuestListPage(appState.getActiveQuestsSorted(), false);
+        page = ActiveQuestPage(widget.db);
       case 2:
-        page = QuestListPage(appState.completedQuests, true);
+        page = CompletedQuestPage(widget.db);
       case 3:
-        page = EditQuestPage();
+        page = EditQuestPage(widget.db);
       case 4:
-        page = const DebugPanel();
+        page = DebugPanel(widget.db);
       default:
         throw UnimplementedError('No widget for $selectedPage');
     }

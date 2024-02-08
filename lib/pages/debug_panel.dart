@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:questlines/services/generator.dart';
-import 'package:questlines/state/app_state.dart';
 import 'package:word_generator/word_generator.dart';
 
 class DebugPanel extends StatelessWidget {
-  const DebugPanel({super.key});
+  final db;
+
+  const DebugPanel(this.db, {super.key});
 
   @override
   Widget build(BuildContext context) {
-    var appState = context.watch<MyAppState>();
     addQuest() {
-      appState.saveQuest(generateQuest());
+      db.saveQuest(generateQuest());
     }
 
     clearQuests() {
-      appState.clearQuests();
+      db.clearQuests();
     }
 
     return Column(

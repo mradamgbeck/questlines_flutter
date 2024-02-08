@@ -32,9 +32,9 @@ const StageSchema = CollectionSchema(
       name: r'name',
       type: IsarType.string,
     ),
-    r'questId': PropertySchema(
+    r'priority': PropertySchema(
       id: 3,
-      name: r'questId',
+      name: r'priority',
       type: IsarType.long,
     ),
     r'selected': PropertySchema(
@@ -49,7 +49,14 @@ const StageSchema = CollectionSchema(
   deserializeProp: _stageDeserializeProp,
   idName: r'id',
   indexes: {},
-  links: {},
+  links: {
+    r'quest': LinkSchema(
+      id: 307957461505857629,
+      name: r'quest',
+      target: r'Quest',
+      single: true,
+    )
+  },
   embeddedSchemas: {},
   getId: _stageGetId,
   getLinks: _stageGetLinks,
@@ -76,7 +83,7 @@ void _stageSerialize(
   writer.writeBool(offsets[0], object.complete);
   writer.writeDateTime(offsets[1], object.deadline);
   writer.writeString(offsets[2], object.name);
-  writer.writeLong(offsets[3], object.questId);
+  writer.writeLong(offsets[3], object.priority);
   writer.writeBool(offsets[4], object.selected);
 }
 
@@ -91,7 +98,7 @@ Stage _stageDeserialize(
   object.deadline = reader.readDateTimeOrNull(offsets[1]);
   object.id = id;
   object.name = reader.readString(offsets[2]);
-  object.questId = reader.readLong(offsets[3]);
+  object.priority = reader.readLong(offsets[3]);
   object.selected = reader.readBool(offsets[4]);
   return object;
 }
@@ -123,11 +130,12 @@ Id _stageGetId(Stage object) {
 }
 
 List<IsarLinkBase<dynamic>> _stageGetLinks(Stage object) {
-  return [];
+  return [object.quest];
 }
 
 void _stageAttach(IsarCollection<dynamic> col, Id id, Stage object) {
   object.id = id;
+  object.quest.attach(col, col.isar.collection<Quest>(), r'quest', id);
 }
 
 extension StageQueryWhereSort on QueryBuilder<Stage, Stage, QWhere> {
@@ -465,42 +473,42 @@ extension StageQueryFilter on QueryBuilder<Stage, Stage, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Stage, Stage, QAfterFilterCondition> questIdEqualTo(int value) {
+  QueryBuilder<Stage, Stage, QAfterFilterCondition> priorityEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'questId',
+        property: r'priority',
         value: value,
       ));
     });
   }
 
-  QueryBuilder<Stage, Stage, QAfterFilterCondition> questIdGreaterThan(
+  QueryBuilder<Stage, Stage, QAfterFilterCondition> priorityGreaterThan(
     int value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
-        property: r'questId',
+        property: r'priority',
         value: value,
       ));
     });
   }
 
-  QueryBuilder<Stage, Stage, QAfterFilterCondition> questIdLessThan(
+  QueryBuilder<Stage, Stage, QAfterFilterCondition> priorityLessThan(
     int value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
-        property: r'questId',
+        property: r'priority',
         value: value,
       ));
     });
   }
 
-  QueryBuilder<Stage, Stage, QAfterFilterCondition> questIdBetween(
+  QueryBuilder<Stage, Stage, QAfterFilterCondition> priorityBetween(
     int lower,
     int upper, {
     bool includeLower = true,
@@ -508,7 +516,7 @@ extension StageQueryFilter on QueryBuilder<Stage, Stage, QFilterCondition> {
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
-        property: r'questId',
+        property: r'priority',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -530,7 +538,20 @@ extension StageQueryFilter on QueryBuilder<Stage, Stage, QFilterCondition> {
 
 extension StageQueryObject on QueryBuilder<Stage, Stage, QFilterCondition> {}
 
-extension StageQueryLinks on QueryBuilder<Stage, Stage, QFilterCondition> {}
+extension StageQueryLinks on QueryBuilder<Stage, Stage, QFilterCondition> {
+  QueryBuilder<Stage, Stage, QAfterFilterCondition> quest(
+      FilterQuery<Quest> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.link(q, r'quest');
+    });
+  }
+
+  QueryBuilder<Stage, Stage, QAfterFilterCondition> questIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'quest', 0, true, 0, true);
+    });
+  }
+}
 
 extension StageQuerySortBy on QueryBuilder<Stage, Stage, QSortBy> {
   QueryBuilder<Stage, Stage, QAfterSortBy> sortByComplete() {
@@ -569,15 +590,15 @@ extension StageQuerySortBy on QueryBuilder<Stage, Stage, QSortBy> {
     });
   }
 
-  QueryBuilder<Stage, Stage, QAfterSortBy> sortByQuestId() {
+  QueryBuilder<Stage, Stage, QAfterSortBy> sortByPriority() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'questId', Sort.asc);
+      return query.addSortBy(r'priority', Sort.asc);
     });
   }
 
-  QueryBuilder<Stage, Stage, QAfterSortBy> sortByQuestIdDesc() {
+  QueryBuilder<Stage, Stage, QAfterSortBy> sortByPriorityDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'questId', Sort.desc);
+      return query.addSortBy(r'priority', Sort.desc);
     });
   }
 
@@ -643,15 +664,15 @@ extension StageQuerySortThenBy on QueryBuilder<Stage, Stage, QSortThenBy> {
     });
   }
 
-  QueryBuilder<Stage, Stage, QAfterSortBy> thenByQuestId() {
+  QueryBuilder<Stage, Stage, QAfterSortBy> thenByPriority() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'questId', Sort.asc);
+      return query.addSortBy(r'priority', Sort.asc);
     });
   }
 
-  QueryBuilder<Stage, Stage, QAfterSortBy> thenByQuestIdDesc() {
+  QueryBuilder<Stage, Stage, QAfterSortBy> thenByPriorityDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'questId', Sort.desc);
+      return query.addSortBy(r'priority', Sort.desc);
     });
   }
 
@@ -688,9 +709,9 @@ extension StageQueryWhereDistinct on QueryBuilder<Stage, Stage, QDistinct> {
     });
   }
 
-  QueryBuilder<Stage, Stage, QDistinct> distinctByQuestId() {
+  QueryBuilder<Stage, Stage, QDistinct> distinctByPriority() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'questId');
+      return query.addDistinctBy(r'priority');
     });
   }
 
@@ -726,9 +747,9 @@ extension StageQueryProperty on QueryBuilder<Stage, Stage, QQueryProperty> {
     });
   }
 
-  QueryBuilder<Stage, int, QQueryOperations> questIdProperty() {
+  QueryBuilder<Stage, int, QQueryOperations> priorityProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'questId');
+      return query.addPropertyName(r'priority');
     });
   }
 

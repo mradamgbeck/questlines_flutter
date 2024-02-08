@@ -1,9 +1,8 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_typing_uninitialized_variables, must_be_immutable
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:questlines/pages/edit_quest_page.dart';
-import 'package:questlines/state/app_state.dart';
+import 'package:questlines/services/time.dart';
 import 'package:questlines/types/stage.dart';
 import '../types/quest.dart';
 
@@ -11,24 +10,30 @@ class QuestCard extends StatelessWidget {
   final Quest quest;
   final bool isListPage;
   final bool displayOnly;
+  final db;
 
-  const QuestCard(this.quest, this.isListPage, this.displayOnly, {super.key});
+  late Stage selectedStage;
+  List<Stage> sortedStages = [];
+  QuestCard(this.db, this.quest, this.isListPage, this.displayOnly,
+      {super.key}) {
+    if (!quest.complete) {
+      selectedStage = quest.getCurrentStage();
+    }
+    sortedStages = quest.getStagesSorted();
+  }
 
   @override
   Widget build(BuildContext context) {
-    var appState = context.watch<MyAppState>();
-    Stage selectedStage = quest.stages[quest.currentStage];
-
-    Icon getIcon(thing) => thing.complete
+    getIcon(thing) => thing.complete
         ? Icon(Icons.done)
         : thing.selected
             ? Icon(Icons.explore)
             : Icon(Icons.nightlight);
 
-    Column getStagesWidgets() => Column(
+    getStagesWidgets() => Column(
           children: [
             if (isListPage)
-              for (var stage in quest.stages)
+              for (var stage in sortedStages)
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
                   child: Row(
@@ -41,7 +46,7 @@ class QuestCard extends StatelessWidget {
                           children: [
                             Text(stage.name),
                             if (stage.deadline != null)
-                              Text('${stage.getRemainingTime()} remain')
+                              Text('${getRemainingTime(stage.deadline)} remain')
                           ],
                         ),
                       )
@@ -59,12 +64,13 @@ class QuestCard extends StatelessWidget {
                       children: [
                         Text(selectedStage.name),
                         if (selectedStage.deadline != null)
-                          Text('${selectedStage.getRemainingTime()} remain')
+                          Text(
+                              '${getRemainingTime(selectedStage.deadline)} remain')
                       ],
                     ),
                   ),
                   TextButton(
-                      onPressed: () => {appState.completeStage(selectedStage)},
+                      onPressed: () => {db.completeStage(selectedStage)},
                       child: Text("done"))
                 ],
               )
@@ -76,18 +82,19 @@ class QuestCard extends StatelessWidget {
           ? <Widget>[
               IconButton(
                 icon: Icon(quest.selected ? Icons.nightlight : Icons.explore),
-                onPressed: () => {appState.toggleSelectQuest(quest)},
+                onPressed: () => {db.toggleSelectQuest(quest)},
               ),
               IconButton(
                 icon: Icon(Icons.edit),
                 onPressed: () {
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => EditQuestPage.withQuest(quest)));
+                      builder: (context) =>
+                          EditQuestPage.withQuest(db, quest)));
                 },
               ),
               IconButton(
                 onPressed: () {
-                  appState.deleteActiveQuest(quest);
+                  db.deleteQuest(quest);
                 },
                 icon: Icon(Icons.delete),
               ),

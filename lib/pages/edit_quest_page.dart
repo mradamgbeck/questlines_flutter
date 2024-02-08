@@ -1,10 +1,8 @@
-// ignore_for_file: must_be_immutable
-
-import 'dart:ffi';
+// ignore_for_file: must_be_immutable, prefer_typing_uninitialized_variables
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:questlines/state/app_state.dart';
+import 'package:questlines/services/sizes.dart';
+import 'package:questlines/services/time.dart';
 import 'package:questlines/types/quest.dart';
 import '../types/stage.dart';
 
@@ -13,8 +11,11 @@ class EditQuestPage extends StatefulWidget {
 
   var editing = false;
 
-  EditQuestPage({super.key, this.editing = false});
-  EditQuestPage.withQuest(this.quest, {super.key, this.editing = true});
+  var db;
+
+  EditQuestPage(this.db, {super.key, this.editing = false});
+  EditQuestPage.withQuest(this.db, this.quest,
+      {super.key, this.editing = true});
   @override
   State<EditQuestPage> createState() => _EditQuestPageState();
 }
@@ -23,28 +24,42 @@ class _EditQuestPageState extends State<EditQuestPage> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController questController = TextEditingController();
   TextEditingController stageController = TextEditingController();
+  List<Stage> stages = [];
   @override
   Widget build(BuildContext context) {
-    var appState = context.watch<MyAppState>();
     questController.text = widget.quest.name;
     DateTime? stageDeadline;
 
-    moveStageUp(stage) {
-      int index = widget.quest.stages.indexOf(stage);
-      if (index > 0) {
-        var temp = widget.quest.stages[index];
-        widget.quest.stages.remove(stage);
-        widget.quest.stages.insert(index - 1, temp);
+    selectFirstStage() {
+      for (int i = 0; i < stages.length; i++) {
+        i == 0 ? stages[i].selected = true : stages[i].selected = false;
       }
     }
 
-    moveStageDown(stage) {
-      int index = widget.quest.stages.indexOf(stage);
-      if (index < widget.quest.stages.length - 1) {
-        var temp = widget.quest.stages[index + 1];
-        widget.quest.stages.removeAt(index + 1);
-        widget.quest.stages.insert(index, temp);
+    getPrioritiesInOrder() {
+      for (int i = 0; i < stages.length; i++) {
+        stages[i].priority = i;
       }
+    }
+
+    moveStageUp(stageToMoveUp) {
+      int oldIndex = stages.indexOf(stageToMoveUp);
+      if (oldIndex > 0) {
+        stages.remove(stageToMoveUp);
+        stages.insert(oldIndex - 1, stageToMoveUp);
+      }
+      selectFirstStage();
+      getPrioritiesInOrder();
+    }
+
+    moveStageDown(stageToMoveDown) {
+      int oldIndex = stages.indexOf(stageToMoveDown);
+      if (oldIndex < stages.length - 1) {
+        stages.remove(stageToMoveDown);
+        stages.insert(oldIndex + 1, stageToMoveDown);
+      }
+      selectFirstStage();
+      getPrioritiesInOrder();
     }
 
     pickDeadlineDate() async {
@@ -71,7 +86,7 @@ class _EditQuestPageState extends State<EditQuestPage> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     SizedBox(
-                      width: 300,
+                      width: getPercentageOfScreen(context, 0.75),
                       child: TextFormField(
                         onChanged: (value) {
                           setState(() {
@@ -87,7 +102,7 @@ class _EditQuestPageState extends State<EditQuestPage> {
                     ),
                     Text('Stages'),
                     SizedBox(
-                      width: 300,
+                      width: getPercentageOfScreen(context, 0.75),
                       child: TextFormField(
                         controller: stageController,
                         decoration: InputDecoration(label: Text('Stage Name')),
@@ -111,14 +126,15 @@ class _EditQuestPageState extends State<EditQuestPage> {
                         ElevatedButton(
                           onPressed: () {
                             setState(() {
-                              Stage stage = Stage.forQuest(
-                                  widget.quest.id, stageController.text);
+                              Stage stage = Stage()
+                                ..name = (stageController.text)
+                                ..quest.value = widget.quest;
                               if (stageDeadline != null) {
                                 stage.deadline = stageDeadline;
                               }
-                              widget.quest.stages.add(stage);
-                              widget.quest.stages[widget.quest.currentStage]
-                                  .selected = true;
+                              stages.add(stage);
+                              selectFirstStage();
+                              getPrioritiesInOrder();
                               stageController.clear();
                             });
                           },
@@ -136,7 +152,7 @@ class _EditQuestPageState extends State<EditQuestPage> {
                           ListView(
                             shrinkWrap: true,
                             children: [
-                              for (var stage in widget.quest.stages)
+                              for (var stage in stages)
                                 Row(
                                   children: [
                                     IconButton.filled(
@@ -157,8 +173,8 @@ class _EditQuestPageState extends State<EditQuestPage> {
                                     IconButton.filled(
                                         icon: Icon(Icons.delete),
                                         onPressed: () => {
-                                              setState(() => widget.quest.stages
-                                                  .remove(stage)),
+                                              setState(
+                                                  () => stages.remove(stage)),
                                             }),
                                     Flexible(
                                       child: ListTile(
@@ -167,7 +183,8 @@ class _EditQuestPageState extends State<EditQuestPage> {
                                           children: [
                                             Text(stage.name),
                                             if (stage.deadline != null)
-                                              Text(stage.getDeadline()),
+                                              Text(formatDateTime(
+                                                  stage.deadline)),
                                           ],
                                         ),
                                       ),
@@ -184,7 +201,12 @@ class _EditQuestPageState extends State<EditQuestPage> {
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    appState.saveQuest(widget.quest);
+                    setState(() {
+                      widget.quest.stages.addAll(stages);
+                      stages = [];
+                      questController.clear();
+                      widget.db.saveQuest(widget.quest);
+                    });
                   },
                   child: const Text('Save Quest'),
                 ),

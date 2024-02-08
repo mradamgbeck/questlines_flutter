@@ -27,18 +27,13 @@ const QuestSchema = CollectionSchema(
       name: r'created',
       type: IsarType.long,
     ),
-    r'currentStage': PropertySchema(
-      id: 2,
-      name: r'currentStage',
-      type: IsarType.long,
-    ),
     r'name': PropertySchema(
-      id: 3,
+      id: 2,
       name: r'name',
       type: IsarType.string,
     ),
     r'selected': PropertySchema(
-      id: 4,
+      id: 3,
       name: r'selected',
       type: IsarType.bool,
     )
@@ -48,8 +43,43 @@ const QuestSchema = CollectionSchema(
   deserialize: _questDeserialize,
   deserializeProp: _questDeserializeProp,
   idName: r'id',
-  indexes: {},
-  links: {},
+  indexes: {
+    r'name': IndexSchema(
+      id: 879695947855722453,
+      name: r'name',
+      unique: true,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'name',
+          type: IndexType.hash,
+          caseSensitive: true,
+        )
+      ],
+    ),
+    r'created': IndexSchema(
+      id: 9089682803336859617,
+      name: r'created',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'created',
+          type: IndexType.value,
+          caseSensitive: false,
+        )
+      ],
+    )
+  },
+  links: {
+    r'stages': LinkSchema(
+      id: -1185411813088501359,
+      name: r'stages',
+      target: r'Stage',
+      single: false,
+      linkName: r'quest',
+    )
+  },
   embeddedSchemas: {},
   getId: _questGetId,
   getLinks: _questGetLinks,
@@ -75,9 +105,8 @@ void _questSerialize(
 ) {
   writer.writeBool(offsets[0], object.complete);
   writer.writeLong(offsets[1], object.created);
-  writer.writeLong(offsets[2], object.currentStage);
-  writer.writeString(offsets[3], object.name);
-  writer.writeBool(offsets[4], object.selected);
+  writer.writeString(offsets[2], object.name);
+  writer.writeBool(offsets[3], object.selected);
 }
 
 Quest _questDeserialize(
@@ -89,10 +118,9 @@ Quest _questDeserialize(
   final object = Quest();
   object.complete = reader.readBool(offsets[0]);
   object.created = reader.readLong(offsets[1]);
-  object.currentStage = reader.readLong(offsets[2]);
   object.id = id;
-  object.name = reader.readString(offsets[3]);
-  object.selected = reader.readBool(offsets[4]);
+  object.name = reader.readString(offsets[2]);
+  object.selected = reader.readBool(offsets[3]);
   return object;
 }
 
@@ -108,10 +136,8 @@ P _questDeserializeProp<P>(
     case 1:
       return (reader.readLong(offset)) as P;
     case 2:
-      return (reader.readLong(offset)) as P;
-    case 3:
       return (reader.readString(offset)) as P;
-    case 4:
+    case 3:
       return (reader.readBool(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -123,17 +149,80 @@ Id _questGetId(Quest object) {
 }
 
 List<IsarLinkBase<dynamic>> _questGetLinks(Quest object) {
-  return [];
+  return [object.stages];
 }
 
 void _questAttach(IsarCollection<dynamic> col, Id id, Quest object) {
   object.id = id;
+  object.stages.attach(col, col.isar.collection<Stage>(), r'stages', id);
+}
+
+extension QuestByIndex on IsarCollection<Quest> {
+  Future<Quest?> getByName(String name) {
+    return getByIndex(r'name', [name]);
+  }
+
+  Quest? getByNameSync(String name) {
+    return getByIndexSync(r'name', [name]);
+  }
+
+  Future<bool> deleteByName(String name) {
+    return deleteByIndex(r'name', [name]);
+  }
+
+  bool deleteByNameSync(String name) {
+    return deleteByIndexSync(r'name', [name]);
+  }
+
+  Future<List<Quest?>> getAllByName(List<String> nameValues) {
+    final values = nameValues.map((e) => [e]).toList();
+    return getAllByIndex(r'name', values);
+  }
+
+  List<Quest?> getAllByNameSync(List<String> nameValues) {
+    final values = nameValues.map((e) => [e]).toList();
+    return getAllByIndexSync(r'name', values);
+  }
+
+  Future<int> deleteAllByName(List<String> nameValues) {
+    final values = nameValues.map((e) => [e]).toList();
+    return deleteAllByIndex(r'name', values);
+  }
+
+  int deleteAllByNameSync(List<String> nameValues) {
+    final values = nameValues.map((e) => [e]).toList();
+    return deleteAllByIndexSync(r'name', values);
+  }
+
+  Future<Id> putByName(Quest object) {
+    return putByIndex(r'name', object);
+  }
+
+  Id putByNameSync(Quest object, {bool saveLinks = true}) {
+    return putByIndexSync(r'name', object, saveLinks: saveLinks);
+  }
+
+  Future<List<Id>> putAllByName(List<Quest> objects) {
+    return putAllByIndex(r'name', objects);
+  }
+
+  List<Id> putAllByNameSync(List<Quest> objects, {bool saveLinks = true}) {
+    return putAllByIndexSync(r'name', objects, saveLinks: saveLinks);
+  }
 }
 
 extension QuestQueryWhereSort on QueryBuilder<Quest, Quest, QWhere> {
   QueryBuilder<Quest, Quest, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
+    });
+  }
+
+  QueryBuilder<Quest, Quest, QAfterWhere> anyCreated() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'created'),
+      );
     });
   }
 }
@@ -203,6 +292,137 @@ extension QuestQueryWhere on QueryBuilder<Quest, Quest, QWhereClause> {
       ));
     });
   }
+
+  QueryBuilder<Quest, Quest, QAfterWhereClause> nameEqualTo(String name) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'name',
+        value: [name],
+      ));
+    });
+  }
+
+  QueryBuilder<Quest, Quest, QAfterWhereClause> nameNotEqualTo(String name) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'name',
+              lower: [],
+              upper: [name],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'name',
+              lower: [name],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'name',
+              lower: [name],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'name',
+              lower: [],
+              upper: [name],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
+
+  QueryBuilder<Quest, Quest, QAfterWhereClause> createdEqualTo(int created) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'created',
+        value: [created],
+      ));
+    });
+  }
+
+  QueryBuilder<Quest, Quest, QAfterWhereClause> createdNotEqualTo(int created) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'created',
+              lower: [],
+              upper: [created],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'created',
+              lower: [created],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'created',
+              lower: [created],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'created',
+              lower: [],
+              upper: [created],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
+
+  QueryBuilder<Quest, Quest, QAfterWhereClause> createdGreaterThan(
+    int created, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'created',
+        lower: [created],
+        includeLower: include,
+        upper: [],
+      ));
+    });
+  }
+
+  QueryBuilder<Quest, Quest, QAfterWhereClause> createdLessThan(
+    int created, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'created',
+        lower: [],
+        upper: [created],
+        includeUpper: include,
+      ));
+    });
+  }
+
+  QueryBuilder<Quest, Quest, QAfterWhereClause> createdBetween(
+    int lowerCreated,
+    int upperCreated, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'created',
+        lower: [lowerCreated],
+        includeLower: includeLower,
+        upper: [upperCreated],
+        includeUpper: includeUpper,
+      ));
+    });
+  }
 }
 
 extension QuestQueryFilter on QueryBuilder<Quest, Quest, QFilterCondition> {
@@ -260,59 +480,6 @@ extension QuestQueryFilter on QueryBuilder<Quest, Quest, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
         property: r'created',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-
-  QueryBuilder<Quest, Quest, QAfterFilterCondition> currentStageEqualTo(
-      int value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'currentStage',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<Quest, Quest, QAfterFilterCondition> currentStageGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'currentStage',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<Quest, Quest, QAfterFilterCondition> currentStageLessThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'currentStage',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<Quest, Quest, QAfterFilterCondition> currentStageBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'currentStage',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -514,7 +681,63 @@ extension QuestQueryFilter on QueryBuilder<Quest, Quest, QFilterCondition> {
 
 extension QuestQueryObject on QueryBuilder<Quest, Quest, QFilterCondition> {}
 
-extension QuestQueryLinks on QueryBuilder<Quest, Quest, QFilterCondition> {}
+extension QuestQueryLinks on QueryBuilder<Quest, Quest, QFilterCondition> {
+  QueryBuilder<Quest, Quest, QAfterFilterCondition> stages(
+      FilterQuery<Stage> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.link(q, r'stages');
+    });
+  }
+
+  QueryBuilder<Quest, Quest, QAfterFilterCondition> stagesLengthEqualTo(
+      int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'stages', length, true, length, true);
+    });
+  }
+
+  QueryBuilder<Quest, Quest, QAfterFilterCondition> stagesIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'stages', 0, true, 0, true);
+    });
+  }
+
+  QueryBuilder<Quest, Quest, QAfterFilterCondition> stagesIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'stages', 0, false, 999999, true);
+    });
+  }
+
+  QueryBuilder<Quest, Quest, QAfterFilterCondition> stagesLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'stages', 0, true, length, include);
+    });
+  }
+
+  QueryBuilder<Quest, Quest, QAfterFilterCondition> stagesLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'stages', length, include, 999999, true);
+    });
+  }
+
+  QueryBuilder<Quest, Quest, QAfterFilterCondition> stagesLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(
+          r'stages', lower, includeLower, upper, includeUpper);
+    });
+  }
+}
 
 extension QuestQuerySortBy on QueryBuilder<Quest, Quest, QSortBy> {
   QueryBuilder<Quest, Quest, QAfterSortBy> sortByComplete() {
@@ -538,18 +761,6 @@ extension QuestQuerySortBy on QueryBuilder<Quest, Quest, QSortBy> {
   QueryBuilder<Quest, Quest, QAfterSortBy> sortByCreatedDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'created', Sort.desc);
-    });
-  }
-
-  QueryBuilder<Quest, Quest, QAfterSortBy> sortByCurrentStage() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'currentStage', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Quest, Quest, QAfterSortBy> sortByCurrentStageDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'currentStage', Sort.desc);
     });
   }
 
@@ -603,18 +814,6 @@ extension QuestQuerySortThenBy on QueryBuilder<Quest, Quest, QSortThenBy> {
     });
   }
 
-  QueryBuilder<Quest, Quest, QAfterSortBy> thenByCurrentStage() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'currentStage', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Quest, Quest, QAfterSortBy> thenByCurrentStageDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'currentStage', Sort.desc);
-    });
-  }
-
   QueryBuilder<Quest, Quest, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
@@ -665,12 +864,6 @@ extension QuestQueryWhereDistinct on QueryBuilder<Quest, Quest, QDistinct> {
     });
   }
 
-  QueryBuilder<Quest, Quest, QDistinct> distinctByCurrentStage() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'currentStage');
-    });
-  }
-
   QueryBuilder<Quest, Quest, QDistinct> distinctByName(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -701,12 +894,6 @@ extension QuestQueryProperty on QueryBuilder<Quest, Quest, QQueryProperty> {
   QueryBuilder<Quest, int, QQueryOperations> createdProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'created');
-    });
-  }
-
-  QueryBuilder<Quest, int, QQueryOperations> currentStageProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'currentStage');
     });
   }
 
