@@ -28,7 +28,7 @@ class _EditQuestPageState extends State<EditQuestPage> {
   @override
   Widget build(BuildContext context) {
     questController.text = widget.quest.name;
-    if(widget.quest.stages.isNotEmpty){
+    if (widget.quest.stages.isNotEmpty) {
       stages = widget.quest.getStagesSorted();
     }
     DateTime? stageDeadline;
@@ -45,15 +45,28 @@ class _EditQuestPageState extends State<EditQuestPage> {
       }
     }
 
+    void saveAll() {
+      selectFirstStage();
+      getPrioritiesInOrder();
+      widget.db.saveStages(stages);
+      widget.quest.stages.addAll(stages);
+      widget.db.saveQuest(widget.quest);
+    }
+
+    addStage(stage) {
+      stages.add(stage);
+      widget.quest.stages.add(stage);
+      saveAll();
+      stageController.clear();
+    }
+
     moveStageUp(stageToMoveUp) {
       int oldIndex = stages.indexOf(stageToMoveUp);
       if (oldIndex > 0) {
         stages.remove(stageToMoveUp);
         stages.insert(oldIndex - 1, stageToMoveUp);
       }
-      selectFirstStage();
-      getPrioritiesInOrder();
-      
+      saveAll();
     }
 
     moveStageDown(stageToMoveDown) {
@@ -62,8 +75,14 @@ class _EditQuestPageState extends State<EditQuestPage> {
         stages.remove(stageToMoveDown);
         stages.insert(oldIndex + 1, stageToMoveDown);
       }
-      selectFirstStage();
-      getPrioritiesInOrder();
+      saveAll();
+    }
+
+    removeStage(stage) {
+      stages.remove(stage);
+      widget.db.deleteStage(stage);
+      widget.quest.stages.remove(stage);
+      saveAll();
     }
 
     pickDeadlineDate() async {
@@ -136,10 +155,7 @@ class _EditQuestPageState extends State<EditQuestPage> {
                               if (stageDeadline != null) {
                                 stage.deadline = stageDeadline;
                               }
-                              stages.add(stage);
-                              selectFirstStage();
-                              getPrioritiesInOrder();
-                              stageController.clear();
+                              addStage(stage);
                             });
                           },
                           child: const Text('Add Stage'),
@@ -178,7 +194,7 @@ class _EditQuestPageState extends State<EditQuestPage> {
                                         icon: Icon(Icons.delete),
                                         onPressed: () => {
                                               setState(
-                                                  () => stages.remove(stage)),
+                                                  () => removeStage(stage)),
                                             }),
                                     Flexible(
                                       child: ListTile(
@@ -200,29 +216,12 @@ class _EditQuestPageState extends State<EditQuestPage> {
                         ])
                   ],
                 )),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      widget.quest.stages.addAll(stages);
-                      widget.db.saveStages(stages);
-                      widget.db.saveQuest(widget.quest);
-                      stages = [];
-                      questController.clear();
-                    });
-                  },
-                  child: const Text('Save Quest'),
-                ),
-                if (widget.editing)
-                  ElevatedButton(
-                    child: Text('Back to Quests'),
-                    onPressed: () {
-                      Navigator.maybePop(context);
-                    },
-                  ),
-              ],
+            ElevatedButton(
+              child: Text('Save'),
+              onPressed: () {
+                saveAll();
+                if (widget.editing) Navigator.maybePop(context);
+              },
             )
           ],
         ),

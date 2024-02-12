@@ -26,7 +26,7 @@ class Database {
 
   Future<void> saveQuest(Quest quest) async {
     final db = await isar;
-    db.writeTxn(() => db.quests.put(quest));
+    db.writeTxnSync(() => db.quests.putSync(quest));
   }
 
   getSelectedQuest() async {
@@ -112,7 +112,7 @@ class Database {
 
   saveStage(stage) async {
     final db = await isar;
-    db.writeTxn(() => db.stages.put(stage));
+    db.writeTxnSync(() => db.stages.putSync(stage));
   }
 
   saveStages(stages)async{
@@ -128,6 +128,6 @@ class Database {
 
   Future<void> deleteStage(stage) async {
     final db = await isar;
-    db.writeTxnSync(() => db.stages.delete(stage.id));
+    db.writeTxn(() => db.stages.delete(stage.id));
   }
 }
