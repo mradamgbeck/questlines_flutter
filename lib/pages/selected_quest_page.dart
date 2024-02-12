@@ -19,7 +19,7 @@ class SelectedQuestPage extends StatelessWidget {
             builder: (context, snapshot) => ListView(
                   children: snapshot.hasData
                       ? snapshot.data!.map((quest) {
-                          return QuestCard(db, quest, false, false);
+                          return QuestCard(db, quest, false, true);
                         }).toList()
                       : [NoQuestsCard()],
                 )));
