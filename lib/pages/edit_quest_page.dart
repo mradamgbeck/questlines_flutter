@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable, prefer_typing_uninitialized_variables
 
 import 'package:flutter/material.dart';
+import 'package:questlines/main.dart';
 import 'package:questlines/services/sizes.dart';
 import 'package:questlines/services/time.dart';
 import 'package:questlines/types/quest.dart';
@@ -220,7 +221,12 @@ class _EditQuestPageState extends State<EditQuestPage> {
               child: Text('Save'),
               onPressed: () {
                 saveAll();
-                if (widget.editing) Navigator.maybePop(context);
+                if (widget.editing) {
+                  Navigator.maybePop(context);
+                } else {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => MainPage(title: 'QUESTLINES', db: widget.db)));
+                }
               },
             )
           ],
