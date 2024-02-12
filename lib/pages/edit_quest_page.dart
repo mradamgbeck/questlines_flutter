@@ -100,6 +100,8 @@ class _EditQuestPageState extends State<EditQuestPage> {
           stageDeadline!.day, time!.hour, time.minute);
     }
 
+    pickLocation(){}
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -110,7 +112,7 @@ class _EditQuestPageState extends State<EditQuestPage> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     SizedBox(
-                      width: getPercentageOfScreen(context, 0.75),
+                      width: getPercentageOfScreenWidth(context, 0.75),
                       child: TextFormField(
                         onChanged: (value) {
                           setState(() {
@@ -126,7 +128,7 @@ class _EditQuestPageState extends State<EditQuestPage> {
                     ),
                     Text('Stages'),
                     SizedBox(
-                      width: getPercentageOfScreen(context, 0.75),
+                      width: getPercentageOfScreenWidth(context, 0.75),
                       child: TextFormField(
                         controller: stageController,
                         decoration: InputDecoration(label: Text('Stage Name')),
@@ -149,6 +151,15 @@ class _EditQuestPageState extends State<EditQuestPage> {
                         ),
                         ElevatedButton(
                           onPressed: () {
+                            pickLocation();
+                          },
+                          child: const Icon(Icons.map),
+                        ),
+                        
+                      ],
+                    ),
+                    ElevatedButton(
+                          onPressed: () {
                             setState(() {
                               Stage stage = Stage()
                                 ..name = (stageController.text)
@@ -161,8 +172,6 @@ class _EditQuestPageState extends State<EditQuestPage> {
                           },
                           child: const Text('Add Stage'),
                         ),
-                      ],
-                    ),
                     Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -170,8 +179,7 @@ class _EditQuestPageState extends State<EditQuestPage> {
                             leading: Icon(Icons.map),
                             title: Text(widget.quest.name),
                           ),
-                          ListView(
-                            shrinkWrap: true,
+                          Column(
                             children: [
                               for (var stage in stages)
                                 Row(
