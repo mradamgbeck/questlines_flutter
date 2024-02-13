@@ -1,16 +1,19 @@
 // ignore_for_file: must_be_immutable, prefer_typing_uninitialized_variables
 
 import 'package:flutter/material.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:questlines/constants.dart';
 import 'package:questlines/main.dart';
 import 'package:questlines/services/location.dart';
 import 'package:questlines/services/sizes.dart';
 import 'package:questlines/services/time.dart';
 import 'package:questlines/types/quest.dart';
+import 'package:questlines/widgets/location_picker.dart';
 import '../types/stage.dart';
 
 class EditQuestPage extends StatefulWidget {
   Quest quest = Quest();
+    LatLng? stageLocation;
 
   var editing = false;
 
@@ -61,6 +64,8 @@ class _EditQuestPageState extends State<EditQuestPage> {
       widget.quest.stages.add(stage);
       saveAll();
       stageController.clear();
+      widget.stageLocation = null;
+      stageDeadline = null;
     }
 
     moveStageUp(stageToMoveUp) {
@@ -102,8 +107,39 @@ class _EditQuestPageState extends State<EditQuestPage> {
           stageDeadline!.day, time!.hour, time.minute);
     }
 
-    pickLocation(){
-      getLocation();
+    callback(latLng) {
+      setState(() {
+        widget.stageLocation = LatLng(latLng.latitude, latLng.longitude);
+      });
+    }
+
+    pickLocation() async {
+      await showDialog<void>(
+          context: context,
+          builder: (context) => AlertDialog(
+                content: Stack(
+                  clipBehavior: Clip.none,
+                  children: <Widget>[
+                    SizedBox(
+                        height: 500,
+                        width: 300,
+                        child: LocationPicker(callback)),
+                    Positioned(
+                      right: -40,
+                      top: -40,
+                      child: InkResponse(
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const CircleAvatar(
+                          backgroundColor: Colors.red,
+                          child: Icon(Icons.close),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ));
     }
 
     return Scaffold(
@@ -159,23 +195,26 @@ class _EditQuestPageState extends State<EditQuestPage> {
                           },
                           child: const Icon(Icons.map),
                         ),
-                        
                       ],
                     ),
                     ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              Stage stage = Stage()
-                                ..name = (stageController.text)
-                                ..quest.value = widget.quest;
-                              if (stageDeadline != null) {
-                                stage.deadline = stageDeadline;
-                              }
-                              addStage(stage);
-                            });
-                          },
-                          child: const Text('Add Stage'),
-                        ),
+                      onPressed: () {
+                        setState(() {
+                          Stage stage = Stage()
+                            ..name = (stageController.text)
+                            ..quest.value = widget.quest;
+                          if (widget.stageLocation != null) {
+                            stage.latitude = widget.stageLocation!.latitude;
+                            stage.longitude = widget.stageLocation!.longitude;
+                          }
+                          if (stageDeadline != null) {
+                            stage.deadline = stageDeadline;
+                          }
+                          addStage(stage);
+                        });
+                      },
+                      child: const Text('Add Stage'),
+                    ),
                     Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -237,7 +276,8 @@ class _EditQuestPageState extends State<EditQuestPage> {
                   Navigator.maybePop(context);
                 } else {
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => MainPage(title: APP_TITLE, db: widget.db)));
+                      builder: (context) =>
+                          MainPage(title: APP_TITLE, db: widget.db)));
                 }
               },
             )

@@ -34,12 +34,16 @@ generateQuest() {
 
 getRandomLatitude() {
   var random = Random();
-  return -90 + random.nextDouble() * 90 * 2;
+  double min = 42.18725;
+  double max = 42.27741;
+  return min + random.nextDouble() * (max-min) ;
 }
 
 getRandomLongitude() {
   var random = Random();
-  return -180 + random.nextDouble() * 180 * 2;
+  double min = -83.79626;
+  double max = -83.51207;
+  return min + random.nextDouble() * (max-min) ;
 }
 
 getRandomVerbTheNoun() =>

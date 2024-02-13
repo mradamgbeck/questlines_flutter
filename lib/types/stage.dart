@@ -16,4 +16,13 @@ class Stage {
   double? longitude;
 
   Stage();
+
+  bool hasLocation() {
+    if (latitude == null || longitude == null) {
+      return false;
+    } else if (latitude!.isNaN & longitude!.isNaN) {
+      return false;
+    }
+    return true;
+  }
 }
