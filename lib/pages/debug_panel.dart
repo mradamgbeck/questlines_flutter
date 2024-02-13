@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:questlines/services/generator.dart';
-import 'package:word_generator/word_generator.dart';
 
 class DebugPanel extends StatelessWidget {
   final db;
@@ -26,7 +25,4 @@ class DebugPanel extends StatelessWidget {
       ],
     );
   }
-
-  String generateBullshit(WordGenerator wordGen) =>
-      '${wordGen.randomVerb()} the ${wordGen.randomNoun()}';
 }

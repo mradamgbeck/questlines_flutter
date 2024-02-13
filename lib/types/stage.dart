@@ -10,9 +10,10 @@ class Stage {
   int priority = 0;
   bool selected = false;
   bool complete = false;
-
   final quest = IsarLink<Quest>();
-
   DateTime? deadline;
+  double? latitude;
+  double? longitude;
+
   Stage();
 }

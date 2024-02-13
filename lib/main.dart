@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:questlines/constants.dart';
 import 'package:questlines/pages/active_quest_page.dart';
 import 'package:questlines/pages/completed_quest_page.dart';
 import 'package:questlines/pages/debug_panel.dart';
@@ -26,10 +27,10 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
         create: (context) => MyAppState(),
         child: MaterialApp(
-          title: 'Questlines',
+          title: APP_TITLE,
           theme: ThemeData(
               useMaterial3: true, colorScheme: const ColorScheme.dark()),
-          home: MainPage(title: 'QUESTLINES', db: db),
+          home: MainPage(title: APP_TITLE, db: db),
         ));
   }
 }
@@ -89,10 +90,10 @@ class _MainPageState extends State<MainPage> {
                 icon: Icon(Icons.add),
                 label: 'New',
               ),
-              // NavigationDestination(
-              //   icon: Icon(Icons.bug_report),
-              //   label: 'Debug',
-              // ),
+              NavigationDestination(
+                icon: Icon(Icons.bug_report),
+                label: 'Debug',
+              ),
             ],
             selectedIndex: selectedPage,
             onDestinationSelected: (value) => {

@@ -27,18 +27,28 @@ const StageSchema = CollectionSchema(
       name: r'deadline',
       type: IsarType.dateTime,
     ),
-    r'name': PropertySchema(
+    r'latitude': PropertySchema(
       id: 2,
+      name: r'latitude',
+      type: IsarType.double,
+    ),
+    r'longitude': PropertySchema(
+      id: 3,
+      name: r'longitude',
+      type: IsarType.double,
+    ),
+    r'name': PropertySchema(
+      id: 4,
       name: r'name',
       type: IsarType.string,
     ),
     r'priority': PropertySchema(
-      id: 3,
+      id: 5,
       name: r'priority',
       type: IsarType.long,
     ),
     r'selected': PropertySchema(
-      id: 4,
+      id: 6,
       name: r'selected',
       type: IsarType.bool,
     )
@@ -82,9 +92,11 @@ void _stageSerialize(
 ) {
   writer.writeBool(offsets[0], object.complete);
   writer.writeDateTime(offsets[1], object.deadline);
-  writer.writeString(offsets[2], object.name);
-  writer.writeLong(offsets[3], object.priority);
-  writer.writeBool(offsets[4], object.selected);
+  writer.writeDouble(offsets[2], object.latitude);
+  writer.writeDouble(offsets[3], object.longitude);
+  writer.writeString(offsets[4], object.name);
+  writer.writeLong(offsets[5], object.priority);
+  writer.writeBool(offsets[6], object.selected);
 }
 
 Stage _stageDeserialize(
@@ -97,9 +109,11 @@ Stage _stageDeserialize(
   object.complete = reader.readBool(offsets[0]);
   object.deadline = reader.readDateTimeOrNull(offsets[1]);
   object.id = id;
-  object.name = reader.readString(offsets[2]);
-  object.priority = reader.readLong(offsets[3]);
-  object.selected = reader.readBool(offsets[4]);
+  object.latitude = reader.readDoubleOrNull(offsets[2]);
+  object.longitude = reader.readDoubleOrNull(offsets[3]);
+  object.name = reader.readString(offsets[4]);
+  object.priority = reader.readLong(offsets[5]);
+  object.selected = reader.readBool(offsets[6]);
   return object;
 }
 
@@ -115,10 +129,14 @@ P _stageDeserializeProp<P>(
     case 1:
       return (reader.readDateTimeOrNull(offset)) as P;
     case 2:
-      return (reader.readString(offset)) as P;
+      return (reader.readDoubleOrNull(offset)) as P;
     case 3:
-      return (reader.readLong(offset)) as P;
+      return (reader.readDoubleOrNull(offset)) as P;
     case 4:
+      return (reader.readString(offset)) as P;
+    case 5:
+      return (reader.readLong(offset)) as P;
+    case 6:
       return (reader.readBool(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -341,6 +359,162 @@ extension StageQueryFilter on QueryBuilder<Stage, Stage, QFilterCondition> {
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Stage, Stage, QAfterFilterCondition> latitudeIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'latitude',
+      ));
+    });
+  }
+
+  QueryBuilder<Stage, Stage, QAfterFilterCondition> latitudeIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'latitude',
+      ));
+    });
+  }
+
+  QueryBuilder<Stage, Stage, QAfterFilterCondition> latitudeEqualTo(
+    double? value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'latitude',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<Stage, Stage, QAfterFilterCondition> latitudeGreaterThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'latitude',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<Stage, Stage, QAfterFilterCondition> latitudeLessThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'latitude',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<Stage, Stage, QAfterFilterCondition> latitudeBetween(
+    double? lower,
+    double? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'latitude',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<Stage, Stage, QAfterFilterCondition> longitudeIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'longitude',
+      ));
+    });
+  }
+
+  QueryBuilder<Stage, Stage, QAfterFilterCondition> longitudeIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'longitude',
+      ));
+    });
+  }
+
+  QueryBuilder<Stage, Stage, QAfterFilterCondition> longitudeEqualTo(
+    double? value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'longitude',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<Stage, Stage, QAfterFilterCondition> longitudeGreaterThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'longitude',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<Stage, Stage, QAfterFilterCondition> longitudeLessThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'longitude',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<Stage, Stage, QAfterFilterCondition> longitudeBetween(
+    double? lower,
+    double? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'longitude',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
       ));
     });
   }
@@ -578,6 +752,30 @@ extension StageQuerySortBy on QueryBuilder<Stage, Stage, QSortBy> {
     });
   }
 
+  QueryBuilder<Stage, Stage, QAfterSortBy> sortByLatitude() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'latitude', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Stage, Stage, QAfterSortBy> sortByLatitudeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'latitude', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Stage, Stage, QAfterSortBy> sortByLongitude() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'longitude', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Stage, Stage, QAfterSortBy> sortByLongitudeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'longitude', Sort.desc);
+    });
+  }
+
   QueryBuilder<Stage, Stage, QAfterSortBy> sortByName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.asc);
@@ -652,6 +850,30 @@ extension StageQuerySortThenBy on QueryBuilder<Stage, Stage, QSortThenBy> {
     });
   }
 
+  QueryBuilder<Stage, Stage, QAfterSortBy> thenByLatitude() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'latitude', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Stage, Stage, QAfterSortBy> thenByLatitudeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'latitude', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Stage, Stage, QAfterSortBy> thenByLongitude() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'longitude', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Stage, Stage, QAfterSortBy> thenByLongitudeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'longitude', Sort.desc);
+    });
+  }
+
   QueryBuilder<Stage, Stage, QAfterSortBy> thenByName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.asc);
@@ -702,6 +924,18 @@ extension StageQueryWhereDistinct on QueryBuilder<Stage, Stage, QDistinct> {
     });
   }
 
+  QueryBuilder<Stage, Stage, QDistinct> distinctByLatitude() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'latitude');
+    });
+  }
+
+  QueryBuilder<Stage, Stage, QDistinct> distinctByLongitude() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'longitude');
+    });
+  }
+
   QueryBuilder<Stage, Stage, QDistinct> distinctByName(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -738,6 +972,18 @@ extension StageQueryProperty on QueryBuilder<Stage, Stage, QQueryProperty> {
   QueryBuilder<Stage, DateTime?, QQueryOperations> deadlineProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'deadline');
+    });
+  }
+
+  QueryBuilder<Stage, double?, QQueryOperations> latitudeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'latitude');
+    });
+  }
+
+  QueryBuilder<Stage, double?, QQueryOperations> longitudeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'longitude');
     });
   }
 

@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:questlines/constants.dart';
 import 'package:questlines/types/quest.dart';
 import 'package:questlines/types/stage.dart';
 import 'package:string_extension/string_extension.dart';
@@ -14,18 +15,31 @@ generateQuest() {
     Stage stage = Stage()
       ..name = getRandomVerbTheNoun()
       ..quest.value = quest
-      ..priority = i;
+      ..priority = i
+      ..latitude = getRandomLatitude()
+      ..longitude = getRandomLongitude();
 
     if (Random().nextBool()) {
-      var maxDate = 2147501647000;
+      var maxDate = INT_MAX;
       var millis = maxDate - 100 * Random().nextInt(4294967296);
       stage.deadline = DateTime.fromMillisecondsSinceEpoch(millis);
     }
+
     stages.add(stage);
   }
   stages[0].selected = true;
   quest.stages.addAll(stages);
   return quest;
+}
+
+getRandomLatitude() {
+  var random = Random();
+  return -90 + random.nextDouble() * 90 * 2;
+}
+
+getRandomLongitude() {
+  var random = Random();
+  return -180 + random.nextDouble() * 180 * 2;
 }
 
 getRandomVerbTheNoun() =>

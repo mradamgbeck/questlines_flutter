@@ -1,7 +1,9 @@
 // ignore_for_file: must_be_immutable, prefer_typing_uninitialized_variables
 
 import 'package:flutter/material.dart';
+import 'package:questlines/constants.dart';
 import 'package:questlines/main.dart';
+import 'package:questlines/services/location.dart';
 import 'package:questlines/services/sizes.dart';
 import 'package:questlines/services/time.dart';
 import 'package:questlines/types/quest.dart';
@@ -90,7 +92,7 @@ class _EditQuestPageState extends State<EditQuestPage> {
       stageDeadline = await showDatePicker(
           context: context,
           firstDate: DateTime.now(),
-          lastDate: DateTime.fromMillisecondsSinceEpoch(8640000000000000));
+          lastDate: DateTime.fromMillisecondsSinceEpoch(THE_END_OF_TIME));
     }
 
     pickDeadlineTime() async {
@@ -100,7 +102,9 @@ class _EditQuestPageState extends State<EditQuestPage> {
           stageDeadline!.day, time!.hour, time.minute);
     }
 
-    pickLocation(){}
+    pickLocation(){
+      getLocation();
+    }
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -233,7 +237,7 @@ class _EditQuestPageState extends State<EditQuestPage> {
                   Navigator.maybePop(context);
                 } else {
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => MainPage(title: 'QUESTLINES', db: widget.db)));
+                      builder: (context) => MainPage(title: APP_TITLE, db: widget.db)));
                 }
               },
             )
