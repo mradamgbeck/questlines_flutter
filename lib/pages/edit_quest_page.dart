@@ -62,6 +62,7 @@ class _EditQuestPageState extends State<EditQuestPage> {
     }
 
     addStage(stage) {
+      stage.deadline = stageDeadline;
       stages.add(stage);
       widget.quest.stages.add(stage);
       saveAll();
