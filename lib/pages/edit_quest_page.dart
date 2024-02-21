@@ -4,16 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:questlines/constants.dart';
 import 'package:questlines/main.dart';
-import 'package:questlines/services/location.dart';
 import 'package:questlines/services/sizes.dart';
 import 'package:questlines/services/time.dart';
 import 'package:questlines/types/quest.dart';
 import 'package:questlines/widgets/location_picker.dart';
+import 'package:questlines/widgets/styled_text.dart';
 import '../types/stage.dart';
 
 class EditQuestPage extends StatefulWidget {
   Quest quest = Quest();
-    LatLng? stageLocation;
+  LatLng? stageLocation;
 
   var editing = false;
 
@@ -160,7 +160,9 @@ class _EditQuestPageState extends State<EditQuestPage> {
                           });
                         },
                         controller: questController,
-                        decoration: InputDecoration(label: Text('Quest Name')),
+                        style: TextStyle(color: Colors.white),
+                        decoration: InputDecoration(
+                            label: StyledText.cardTitle('Quest Name')),
                       ),
                     ),
                     SizedBox(
@@ -171,7 +173,9 @@ class _EditQuestPageState extends State<EditQuestPage> {
                       width: getPercentageOfScreenWidth(context, 0.75),
                       child: TextFormField(
                         controller: stageController,
-                        decoration: InputDecoration(label: Text('Stage Name')),
+                        style: TextStyle(color: Colors.white),
+                        decoration: InputDecoration(
+                            label: StyledText.cardTitle('Stage Name')),
                       ),
                     ),
                     Row(
@@ -213,14 +217,14 @@ class _EditQuestPageState extends State<EditQuestPage> {
                           addStage(stage);
                         });
                       },
-                      child: const Text('Add Stage'),
+                      child: StyledText.navButton('Add Stage'),
                     ),
                     Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           ListTile(
                             leading: Icon(Icons.map),
-                            title: Text(widget.quest.name),
+                            title: StyledText.cardBody(widget.quest.name),
                           ),
                           Column(
                             children: [
@@ -253,10 +257,11 @@ class _EditQuestPageState extends State<EditQuestPage> {
                                         key: ValueKey(stage.id),
                                         title: Column(
                                           children: [
-                                            Text(stage.name),
+                                            StyledText.cardBody(stage.name),
                                             if (stage.deadline != null)
-                                              Text(formatDateTime(
-                                                  stage.deadline)),
+                                              StyledText.cardBody(
+                                                  formatDateTime(
+                                                      stage.deadline)),
                                           ],
                                         ),
                                       ),
@@ -269,7 +274,7 @@ class _EditQuestPageState extends State<EditQuestPage> {
                   ],
                 )),
             ElevatedButton(
-              child: Text('Save'),
+              child: StyledText.navButton('Save'),
               onPressed: () {
                 saveAll();
                 if (widget.editing) {

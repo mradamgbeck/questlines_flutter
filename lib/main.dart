@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:questlines/constants.dart';
 import 'package:questlines/pages/active_quest_page.dart';
@@ -8,6 +9,7 @@ import 'package:questlines/pages/edit_quest_page.dart';
 import 'package:questlines/pages/selected_quest_page.dart';
 import 'package:questlines/state/app_state.dart';
 import 'package:questlines/state/database.dart';
+import 'package:questlines/widgets/styled_text.dart';
 
 main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,7 +31,11 @@ class MyApp extends StatelessWidget {
         child: MaterialApp(
           title: APP_TITLE,
           theme: ThemeData(
-              useMaterial3: true, colorScheme: const ColorScheme.dark()),
+              useMaterial3: true, 
+              primaryColor: Colors.red,
+              brightness: Brightness.dark,
+              textTheme: GoogleFonts.cinzelDecorativeTextTheme()
+              ),
           home: MainPage(title: APP_TITLE, db: db),
         ));
   }
@@ -68,7 +74,7 @@ class _MainPageState extends State<MainPage> {
         appBar: AppBar(
           centerTitle: true,
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: Text(widget.title),
+          title: StyledText.appTitle(widget.title),
         ),
         body: Column(children: [
           SafeArea(
@@ -90,10 +96,10 @@ class _MainPageState extends State<MainPage> {
                 icon: Icon(Icons.add),
                 label: 'New',
               ),
-              // NavigationDestination(
-              //   icon: Icon(Icons.bug_report),
-              //   label: 'Debug',
-              // ),
+              NavigationDestination(
+                icon: Icon(Icons.bug_report),
+                label: 'Debug',
+              ),
             ],
             selectedIndex: selectedPage,
             onDestinationSelected: (value) => {

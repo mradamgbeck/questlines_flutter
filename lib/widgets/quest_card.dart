@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:questlines/pages/edit_quest_page.dart';
 import 'package:questlines/services/time.dart';
 import 'package:questlines/types/stage.dart';
+import 'package:questlines/widgets/styled_text.dart';
 import '../types/quest.dart';
 
 class QuestCard extends StatelessWidget {
@@ -44,9 +45,9 @@ class QuestCard extends StatelessWidget {
                         padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                         child: Column(
                           children: [
-                            Text(stage.name),
+                            StyledText.cardBody(stage.name),
                             if (stage.deadline != null)
-                              Text('${getRemainingTime(stage.deadline)} remain')
+                              StyledText.cardBody('${getRemainingTime(stage.deadline)} remain')
                           ],
                         ),
                       )
@@ -62,9 +63,9 @@ class QuestCard extends StatelessWidget {
                     padding: const EdgeInsets.all(10.0),
                     child: Column(
                       children: [
-                        Text(selectedStage.name),
+                        StyledText.cardBody(selectedStage.name),
                         if (selectedStage.deadline != null)
-                          Text(
+                          StyledText.cardBody(
                               '${getRemainingTime(selectedStage.deadline)} remain')
                       ],
                     ),
@@ -112,7 +113,7 @@ class QuestCard extends StatelessWidget {
             ListTile(
               titleAlignment: ListTileTitleAlignment.center,
               leading: getIcon(quest),
-              title: Text(quest.name),
+              title: StyledText.cardTitle(quest.name),
             ),
             getStagesWidgets(),
             Row(
