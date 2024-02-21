@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:questlines/constants/icons.dart';
 import 'package:questlines/constants/strings.dart';
 import 'package:questlines/constants/values.dart';
 import 'package:questlines/main.dart';
@@ -186,19 +187,19 @@ class _EditQuestPageState extends State<EditQuestPage> {
                           onPressed: () {
                             pickDeadlineDate();
                           },
-                          child: const Icon(Icons.date_range),
+                          child: SELECT_DATE_ICON,
                         ),
                         ElevatedButton(
                           onPressed: () {
                             pickDeadlineTime();
                           },
-                          child: const Icon(Icons.timer),
+                          child: SELECT_TIME_ICON,
                         ),
                         ElevatedButton(
                           onPressed: () {
                             pickLocation();
                           },
-                          child: const Icon(Icons.map),
+                          child: SELECT_LOCATION_ICON,
                         ),
                       ],
                     ),

@@ -72,7 +72,7 @@ class _MainPageState extends State<MainPage> {
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          backgroundColor: Colors.black,
           title: StyledText.appTitle(widget.title),
         ),
         body: Column(children: [

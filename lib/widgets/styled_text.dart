@@ -11,6 +11,7 @@ class StyledText extends StatelessWidget {
       return TextTheme(
               displayLarge: TextStyle(
                   color: Colors.white,
+                  shadows: [Shadow(color: const Color.fromARGB(255, 155, 210, 255), blurRadius: 20)],
                   fontWeight: FontWeight.bold,
                   letterSpacing: 2))
           .displayLarge;

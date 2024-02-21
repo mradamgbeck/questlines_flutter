@@ -27,29 +27,31 @@ class SelectedQuestPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<Quest>>(
-        stream: db.listenToSelectedQuests(),
-        initialData: [],
-        builder: (context, snapshot) => snapshot.hasData
-            ? Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Expanded(
-                    flex: 1,
-                    child: QuestMap(getSelectedStages(snapshot.data))),
-                  Expanded(
-                    flex: 1,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: getQuestCards(snapshot.data!),
+    return Scaffold(
+      body: StreamBuilder<List<Quest>>(
+          stream: db.listenToSelectedQuests(),
+          initialData: [],
+          builder: (context, snapshot) => snapshot.hasData
+              ? Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: QuestMap(getSelectedStages(snapshot.data))),
+                    Expanded(
+                      flex: 1,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: getQuestCards(snapshot.data!),
+                        ),
                       ),
-                    ),
-                  )
-                ],
-              )
-            : Column(
-                children: [QuestMap([]), NoQuestsCard()],
-              ));
+                    )
+                  ],
+                )
+              : Column(
+                  children: [QuestMap([]), NoQuestsCard()],
+                )),
+    );
   }
 }
