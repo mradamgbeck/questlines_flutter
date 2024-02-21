@@ -44,12 +44,15 @@ class QuestCard extends StatelessWidget {
                       getIcon(stage),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                        child: Column(
-                          children: [
-                            StyledText.cardBody(stage.name),
-                            if (stage.deadline != null)
-                              StyledText.cardBody('${getRemainingTime(stage.deadline)} remain')
-                          ],
+                        child: SizedBox(
+                          width: 190,
+                          child: Column(
+                            children: [
+                              StyledText.cardBody(stage.name),
+                              if (stage.deadline != null)
+                                StyledText.cardBody('${getRemainingTime(stage.deadline)} remain')
+                            ],
+                          ),
                         ),
                       )
                     ],
@@ -62,13 +65,17 @@ class QuestCard extends StatelessWidget {
                   getIcon(selectedStage),
                   Padding(
                     padding: const EdgeInsets.all(10.0),
-                    child: Column(
-                      children: [
-                        StyledText.cardBody(selectedStage.name),
-                        if (selectedStage.deadline != null)
-                          StyledText.cardBody(
-                              '${getRemainingTime(selectedStage.deadline)} remain')
-                      ],
+                    child: SizedBox(
+                          width: 190,
+
+                      child: Column(
+                        children: [
+                          StyledText.cardBody(selectedStage.name),
+                          if (selectedStage.deadline != null)
+                            StyledText.cardBody(
+                                '${getRemainingTime(selectedStage.deadline)} remain')
+                        ],
+                      ),
                     ),
                   ),
                   TextButton(

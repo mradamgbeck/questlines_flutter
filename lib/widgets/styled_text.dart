@@ -54,6 +54,12 @@ class StyledText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(text, style: getStyle?.call(context));
+    return Text(
+      text, 
+      style: getStyle?.call(context),
+      softWrap: false,
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+      );
   }
 }
