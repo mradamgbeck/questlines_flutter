@@ -69,6 +69,15 @@ class Database {
   }
 
   toggleSelectQuest(questToToggle) async {
+    final db = await isar;
+    db.quests
+        .filter()
+        .selectedEqualTo(true)
+        .findAll()
+        .then((selectedQuests) => {
+              for (var quest in selectedQuests)
+                {quest.selected = false, saveQuest(quest)}
+            });
     questToToggle.selected = !questToToggle.selected;
     saveQuest(questToToggle);
   }
@@ -115,8 +124,8 @@ class Database {
     db.writeTxnSync(() => db.stages.putSync(stage));
   }
 
-  saveStages(stages)async{
-    for(var stage in stages){
+  saveStages(stages) async {
+    for (var stage in stages) {
       saveStage(stage);
     }
   }
