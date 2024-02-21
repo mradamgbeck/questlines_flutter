@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:questlines/types/quest.dart';
 import 'package:questlines/types/stage.dart';
 import 'package:questlines/widgets/quest_map.dart';
-import 'package:questlines/widgets/no_quests_card.dart';
 import 'package:questlines/widgets/quest_card.dart';
 
 class SelectedQuestPage extends StatelessWidget {

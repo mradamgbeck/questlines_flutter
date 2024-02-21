@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:questlines/types/quest.dart';
-import 'package:questlines/widgets/no_quests_card.dart';
 import 'package:questlines/widgets/quest_card.dart';
 
 class ActiveQuestPage extends StatelessWidget {
@@ -20,7 +19,7 @@ class ActiveQuestPage extends StatelessWidget {
                       ? snapshot.data!.map((quest) {
                           return QuestCard(db, quest, true, false);
                         }).toList()
-                      : [NoQuestsCard()],
+                      : [],
                 )));
   }
 }
