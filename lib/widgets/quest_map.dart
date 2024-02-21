@@ -76,15 +76,14 @@ class _QuestMapState extends State<QuestMap> {
                               : createMarkers())
                     ],
                   ),
-                  Positioned(
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      top: 550,
+                  Positioned.fromRelativeRect(
+                      rect: RelativeRect.fromLTRB(0, 400, 0, 00),
                       child: IconButton(
                         icon: RESET_LOCATION_ICON,
-                        onPressed: () =>
-                            {mapController.moveAndRotate(location!, INITIAL_ZOOM, 0)},
+                        onPressed: () => {
+                          mapController.moveAndRotate(
+                              location!, INITIAL_ZOOM, 0)
+                        },
                       )),
                 ]),
         ));
