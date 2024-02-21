@@ -115,6 +115,7 @@ class QuestCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.fromLTRB(5, 5, 5, 0),
       child: Card(
+        color: Colors.transparent,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [

@@ -95,10 +95,10 @@ class _MainPageState extends State<MainPage> {
                 icon: Icon(Icons.add),
                 label: 'New',
               ),
-              NavigationDestination(
-                icon: Icon(Icons.bug_report),
-                label: 'Debug',
-              ),
+              // NavigationDestination(
+              //   icon: Icon(Icons.bug_report),
+              //   label: 'Debug',
+              // ),
             ],
             selectedIndex: selectedPage,
             onDestinationSelected: (value) => {

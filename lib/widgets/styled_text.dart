@@ -11,7 +11,11 @@ class StyledText extends StatelessWidget {
       return TextTheme(
               displayLarge: TextStyle(
                   color: Colors.white,
-                  shadows: [Shadow(color: const Color.fromARGB(255, 155, 210, 255), blurRadius: 20)],
+                  shadows: [
+                    Shadow(
+                        color: const Color.fromARGB(255, 155, 210, 255),
+                        blurRadius: 20)
+                  ],
                   fontWeight: FontWeight.bold,
                   letterSpacing: 2))
           .displayLarge;
@@ -21,11 +25,9 @@ class StyledText extends StatelessWidget {
   StyledText.navButton(this.text, {Key? key}) : super(key: key) {
     getStyle = (context) {
       return TextTheme(
-              headlineSmall: TextStyle(
-                  shadows: [Shadow(color: Color.fromARGB(255, 131, 205, 255), blurRadius: 25)],
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 2))
+              headlineSmall: TextStyle(shadows: [
+        Shadow(color: Color.fromARGB(255, 131, 205, 255), blurRadius: 25)
+      ], color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: 2))
           .headlineSmall;
     };
   }
@@ -35,6 +37,7 @@ class StyledText extends StatelessWidget {
       return TextTheme(
               titleSmall: TextStyle(
                   color: Colors.white,
+                  shadows: [Shadow(color: Colors.black, blurRadius: 20)],
                   fontWeight: FontWeight.bold,
                   letterSpacing: 2))
           .titleSmall;
@@ -46,6 +49,7 @@ class StyledText extends StatelessWidget {
       return TextTheme(
               bodySmall: TextStyle(
                   color: Colors.white,
+                  shadows: [Shadow(color: Colors.black, blurRadius: 20)],
                   fontWeight: FontWeight.bold,
                   letterSpacing: 2))
           .bodySmall;
@@ -55,11 +59,11 @@ class StyledText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
-      text, 
+      text,
       style: getStyle?.call(context),
       softWrap: false,
       maxLines: 2,
       overflow: TextOverflow.ellipsis,
-      );
+    );
   }
 }

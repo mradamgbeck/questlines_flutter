@@ -20,7 +20,10 @@ class SelectedQuestPage extends StatelessWidget {
 
   getQuestCards(List<Quest> data) {
     return data.map((quest) {
-      return QuestCard(db, quest, false, true);
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: QuestCard(db, quest, false, true),
+      );
     }).toList();
   }
 
