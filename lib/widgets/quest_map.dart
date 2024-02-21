@@ -77,10 +77,10 @@ class _QuestMapState extends State<QuestMap> {
                     ],
                   ),
                   Positioned(
-                      left: 325,
+                      left: 0,
                       right: 0,
-                      bottom: -250,
-                      top: 0,
+                      bottom: 0,
+                      top: 550,
                       child: IconButton(
                         icon: RESET_LOCATION_ICON,
                         onPressed: () =>

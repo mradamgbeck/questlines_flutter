@@ -32,12 +32,10 @@ class SelectedQuestPage extends StatelessWidget {
           stream: db.listenToSelectedQuests(),
           initialData: [],
           builder: (context, snapshot) => snapshot.hasData
-              ? Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+              ? Stack(
                   children: [
                     Expanded(
-                      flex: 1,
+                      flex: 4,
                       child: QuestMap(getSelectedStages(snapshot.data))),
                     Expanded(
                       flex: 1,
@@ -49,9 +47,7 @@ class SelectedQuestPage extends StatelessWidget {
                     )
                   ],
                 )
-              : Column(
-                  children: [QuestMap([]), NoQuestsCard()],
-                )),
+              : QuestMap([])),
     );
   }
 }

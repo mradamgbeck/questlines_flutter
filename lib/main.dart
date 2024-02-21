@@ -80,16 +80,16 @@ class _MainPageState extends State<MainPage> {
               child: NavigationBar(
             destinations: const [
               NavigationDestination(
-                icon: Icon(Icons.bungalow),
-                label: 'Selected',
+                icon: Icon(Icons.map),
+                label: 'Map',
               ),
               NavigationDestination(
-                icon: Icon(Icons.book),
-                label: 'Active',
+                icon: Icon(Icons.history_edu),
+                label: 'Quests',
               ),
               NavigationDestination(
                 icon: Icon(Icons.done),
-                label: 'Complete',
+                label: 'History',
               ),
               NavigationDestination(
                 icon: Icon(Icons.add),
