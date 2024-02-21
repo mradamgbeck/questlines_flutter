@@ -1,5 +1,5 @@
 import 'dart:math';
-import 'package:questlines/constants.dart';
+import 'package:questlines/constants/values.dart';
 import 'package:questlines/types/quest.dart';
 import 'package:questlines/types/stage.dart';
 import 'package:string_extension/string_extension.dart';

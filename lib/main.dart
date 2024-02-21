@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:questlines/constants.dart';
+import 'package:questlines/constants/strings.dart';
 import 'package:questlines/pages/active_quest_page.dart';
 import 'package:questlines/pages/completed_quest_page.dart';
 import 'package:questlines/pages/debug_panel.dart';
@@ -32,7 +32,6 @@ class MyApp extends StatelessWidget {
           title: APP_TITLE,
           theme: ThemeData(
               useMaterial3: true, 
-              primaryColor: Colors.red,
               brightness: Brightness.dark,
               textTheme: GoogleFonts.cinzelDecorativeTextTheme()
               ),

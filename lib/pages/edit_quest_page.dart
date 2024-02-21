@@ -2,7 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:questlines/constants.dart';
+import 'package:questlines/constants/strings.dart';
+import 'package:questlines/constants/values.dart';
 import 'package:questlines/main.dart';
 import 'package:questlines/services/sizes.dart';
 import 'package:questlines/services/time.dart';

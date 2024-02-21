@@ -3,7 +3,9 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter/material.dart';
-import 'package:questlines/constants.dart';
+import 'package:questlines/constants/icons.dart';
+import 'package:questlines/constants/strings.dart';
+import 'package:questlines/constants/values.dart';
 import 'package:questlines/services/location.dart';
 
 class LocationPicker extends StatefulWidget {
@@ -78,12 +80,9 @@ class _LocationPickerState extends State<LocationPicker> {
                     widthFactor: 0.5,
                     heightFactor: 0.5,
                     child: IconButton(
-                      icon: Icon(
-                        Icons.adjust_outlined,
-                        color: Colors.red,
-                      ),
+                      icon: RESET_LOCATION_ICON,
                       onPressed: () =>
-                          {mapController.move(location!, INITIAL_ZOOM)},
+                          {mapController.moveAndRotate(location!, INITIAL_ZOOM, 0)},
                     ),
                   ),
                 ]),

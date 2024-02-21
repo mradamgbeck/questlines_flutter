@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_typing_uninitialized_variables, must_be_immutable
 
 import 'package:flutter/material.dart';
+import 'package:questlines/constants/icons.dart';
 import 'package:questlines/pages/edit_quest_page.dart';
 import 'package:questlines/services/time.dart';
 import 'package:questlines/types/stage.dart';
@@ -26,10 +27,10 @@ class QuestCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     getIcon(thing) => thing.complete
-        ? Icon(Icons.done)
+        ? COMPLETED_ICON
         : thing.selected
-            ? Icon(Icons.explore)
-            : Icon(Icons.nightlight);
+            ? SELECTED_ICON
+            : UNSELECTED_ICON;
 
     getStagesWidgets() => Column(
           children: [
@@ -72,7 +73,7 @@ class QuestCard extends StatelessWidget {
                   ),
                   TextButton(
                       onPressed: () => {db.completeStage(selectedStage)},
-                      child: Text("done"))
+                      child: StyledText.navButton("done"))
                 ],
               )
           ],
