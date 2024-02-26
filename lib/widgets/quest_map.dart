@@ -77,7 +77,7 @@ class _QuestMapState extends State<QuestMap> {
                     ],
                   ),
                   Positioned.fromRelativeRect(
-                      rect: RelativeRect.fromLTRB(0, 400, 0, 00),
+                      rect: RelativeRect.fromLTRB(0, 450, 0, 0),
                       child: IconButton(
                         icon: RESET_LOCATION_ICON,
                         onPressed: () => {

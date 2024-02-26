@@ -36,16 +36,9 @@ class SelectedQuestPage extends StatelessWidget {
           builder: (context, snapshot) => snapshot.hasData
               ? Stack(
                   children: [
-                    Expanded(
-                      flex: 4,
-                      child: QuestMap(getSelectedStages(snapshot.data))),
-                    Expanded(
-                      flex: 1,
-                      child: SingleChildScrollView(
-                        child: Column(
-                          children: getQuestCards(snapshot.data!),
-                        ),
-                      ),
+                    QuestMap(getSelectedStages(snapshot.data)),
+                    Column(
+                      children: getQuestCards(snapshot.data!),
                     )
                   ],
                 )
