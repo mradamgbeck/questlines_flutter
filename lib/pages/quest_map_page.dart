@@ -6,10 +6,10 @@ import 'package:questlines/types/stage.dart';
 import 'package:questlines/widgets/quest_map.dart';
 import 'package:questlines/widgets/quest_card.dart';
 
-class SelectedQuestPage extends StatelessWidget {
+class QuestMapPage extends StatelessWidget {
   final db;
 
-  const SelectedQuestPage(this.db, {super.key});
+  const QuestMapPage(this.db, {super.key});
   getSelectedStages(quests) {
     List<Stage> stages = [];
     for (var quest in quests) {

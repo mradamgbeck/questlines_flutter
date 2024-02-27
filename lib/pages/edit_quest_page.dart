@@ -9,6 +9,7 @@ import 'package:questlines/main.dart';
 import 'package:questlines/services/sizes.dart';
 import 'package:questlines/services/time.dart';
 import 'package:questlines/types/quest.dart';
+import 'package:questlines/widgets/add_stage.dart';
 import 'package:questlines/widgets/location_picker.dart';
 import 'package:questlines/widgets/styled_text.dart';
 import '../types/stage.dart';
@@ -62,7 +63,6 @@ class _EditQuestPageState extends State<EditQuestPage> {
     }
 
     addStage(stage) {
-      stage.deadline = stageDeadline;
       stages.add(stage);
       widget.quest.stages.add(stage);
       saveAll();
@@ -96,27 +96,14 @@ class _EditQuestPageState extends State<EditQuestPage> {
       saveAll();
     }
 
-    pickDeadlineDate() async {
-      stageDeadline = await showDatePicker(
-          context: context,
-          firstDate: DateTime.now(),
-          lastDate: DateTime.fromMillisecondsSinceEpoch(THE_END_OF_TIME));
-    }
-
-    pickDeadlineTime() async {
-      var time =
-          await showTimePicker(context: context, initialTime: TimeOfDay.now());
-      stageDeadline = DateTime(stageDeadline!.year, stageDeadline!.month,
-          stageDeadline!.day, time!.hour, time.minute);
-    }
-
-    callback(latLng) {
+    stageCallback(Stage stage) {
       setState(() {
-        widget.stageLocation = LatLng(latLng.latitude, latLng.longitude);
+        stage.quest.value = widget.quest;
+        addStage(stage);
       });
     }
 
-    pickLocation() async {
+    createStage() async {
       await showDialog<void>(
           context: context,
           builder: (context) => AlertDialog(
@@ -124,9 +111,9 @@ class _EditQuestPageState extends State<EditQuestPage> {
                   clipBehavior: Clip.none,
                   children: <Widget>[
                     SizedBox(
-                        height: 500,
-                        width: 300,
-                        child: LocationPicker(callback)),
+                        height: getPercentageOfScreenHeight(context, 0.25),
+                        width: getPercentageOfScreenWidth(context, 1),
+                        child: AddStage(stageCallback)),
                     Positioned(
                       right: -40,
                       top: -40,
@@ -168,57 +155,9 @@ class _EditQuestPageState extends State<EditQuestPage> {
                             label: StyledText.cardTitle('Quest Name')),
                       ),
                     ),
-                    SizedBox(
-                      height: 25,
-                    ),
-                    Text('Stages'),
-                    SizedBox(
-                      width: getPercentageOfScreenWidth(context, 0.75),
-                      child: TextFormField(
-                        controller: stageController,
-                        style: TextStyle(color: Colors.white),
-                        decoration: InputDecoration(
-                            label: StyledText.cardTitle('Stage Name')),
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            pickDeadlineDate();
-                          },
-                          child: SELECT_DATE_ICON,
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            pickDeadlineTime();
-                          },
-                          child: SELECT_TIME_ICON,
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            pickLocation();
-                          },
-                          child: SELECT_LOCATION_ICON,
-                        ),
-                      ],
-                    ),
                     ElevatedButton(
                       onPressed: () {
-                        setState(() {
-                          Stage stage = Stage()
-                            ..name = (stageController.text)
-                            ..quest.value = widget.quest;
-                          if (widget.stageLocation != null) {
-                            stage.latitude = widget.stageLocation!.latitude;
-                            stage.longitude = widget.stageLocation!.longitude;
-                          }
-                          if (stageDeadline != null) {
-                            stage.deadline = stageDeadline;
-                          }
-                          addStage(stage);
-                        });
+                        createStage();
                       },
                       child: StyledText.navButton('Add Stage'),
                     ),

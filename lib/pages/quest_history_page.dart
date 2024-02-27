@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:questlines/types/quest.dart';
 import 'package:questlines/widgets/quest_card.dart';
 
-class CompletedQuestPage extends StatelessWidget {
+class QuestHistoryPage extends StatelessWidget {
   final db;
-  const CompletedQuestPage(this.db, {super.key});
+  const QuestHistoryPage(this.db, {super.key});
 
   @override
   Widget build(BuildContext context) {

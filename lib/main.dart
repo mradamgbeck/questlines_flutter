@@ -3,10 +3,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:questlines/constants/strings.dart';
 import 'package:questlines/pages/active_quest_page.dart';
-import 'package:questlines/pages/completed_quest_page.dart';
+import 'package:questlines/pages/quest_history_page.dart';
 import 'package:questlines/pages/debug_panel.dart';
 import 'package:questlines/pages/edit_quest_page.dart';
-import 'package:questlines/pages/selected_quest_page.dart';
+import 'package:questlines/pages/quest_map_page.dart';
 import 'package:questlines/state/app_state.dart';
 import 'package:questlines/state/database.dart';
 import 'package:questlines/widgets/styled_text.dart';
@@ -57,11 +57,11 @@ class _MainPageState extends State<MainPage> {
     Widget page;
     switch (selectedPage) {
       case 0:
-        page = SelectedQuestPage(widget.db);
+        page = QuestMapPage(widget.db);
       case 1:
         page = ActiveQuestPage(widget.db);
       case 2:
-        page = CompletedQuestPage(widget.db);
+        page = QuestHistoryPage(widget.db);
       case 3:
         page = EditQuestPage(widget.db);
       case 4:

@@ -7,12 +7,12 @@ import 'package:questlines/constants/icons.dart';
 import 'package:questlines/constants/strings.dart';
 import 'package:questlines/constants/values.dart';
 import 'package:questlines/services/location.dart';
+import 'package:questlines/services/sizes.dart';
 
 class LocationPicker extends StatefulWidget {
   var locationCallback;
 
-  LocationPicker(Null Function( dynamic latLng) callback,
-      {super.key}) {
+  LocationPicker(Null Function(LatLng latLng) callback, {super.key}) {
     locationCallback = callback;
   }
 
@@ -46,46 +46,45 @@ class _LocationPickerState extends State<LocationPicker> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-        padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(15),
-          child: _isLoading
-              ? Center(child: CircularProgressIndicator())
-              : Stack(fit: StackFit.expand, children: [
-                  FlutterMap(
-                    mapController: mapController,
-                    options: MapOptions(
-                        onTap: (position, latLng) => {
-                              setState(() => {
-                                    if (markers.length > 1)
-                                      {markers.removeLast()},
-                                    markers.add(Marker(
-                                        child: ACTIVE_STAGE_ICON,
-                                        point: latLng)),
-                                    widget.locationCallback(latLng)
-                                  })
-                            },
-                        initialCenter: location!,
-                        initialZoom: INITIAL_ZOOM),
-                    children: [
-                      TileLayer(
-                          urlTemplate: MAP_TILE_URL,
-                          userAgentPackageName: PACKAGE_NAME),
-                      MarkerLayer(markers: markers)
-                    ],
-                  ),
-                  Align(
-                    alignment: AlignmentDirectional.bottomEnd,
-                    widthFactor: 0.5,
-                    heightFactor: 0.5,
-                    child: IconButton(
-                      icon: RESET_LOCATION_ICON,
-                      onPressed: () =>
-                          {mapController.moveAndRotate(location!, INITIAL_ZOOM, 0)},
-                    ),
-                  ),
-                ]),
-        ));
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(15),
+      child: _isLoading
+          ? Center(child: CircularProgressIndicator())
+          : Stack(fit: StackFit.expand, children: [
+              FlutterMap(
+                mapController: mapController,
+                options: MapOptions(
+                    onTap: (position, latLng) => {
+                          setState(() => {
+                                if (markers.length > 1)
+                                  {markers.removeLast()},
+                                markers.add(Marker(
+                                    child: ACTIVE_STAGE_ICON,
+                                    point: latLng)),
+                                widget.locationCallback(latLng)
+                              })
+                        },
+                    initialCenter: location!,
+                    initialZoom: INITIAL_ZOOM),
+                children: [
+                  TileLayer(
+                      urlTemplate: MAP_TILE_URL,
+                      userAgentPackageName: PACKAGE_NAME),
+                  MarkerLayer(markers: markers)
+                ],
+              ),
+              Align(
+                alignment: AlignmentDirectional.bottomEnd,
+                widthFactor: 0.5,
+                heightFactor: 0.5,
+                child: IconButton(
+                  icon: RESET_LOCATION_ICON,
+                  onPressed: () => {
+                    mapController.moveAndRotate(location!, INITIAL_ZOOM, 0)
+                  },
+                ),
+              ),
+            ]),
+    );
   }
 }
