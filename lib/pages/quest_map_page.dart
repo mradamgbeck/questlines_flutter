@@ -6,43 +6,54 @@ import 'package:questlines/types/stage.dart';
 import 'package:questlines/widgets/quest_map.dart';
 import 'package:questlines/widgets/quest_card.dart';
 
-class QuestMapPage extends StatelessWidget {
+class QuestMapPage extends StatefulWidget {
   final db;
-
   const QuestMapPage(this.db, {super.key});
-  getSelectedStages(quests) {
+
+  @override
+  State<QuestMapPage> createState() => _QuestMapPageState();
+}
+
+class _QuestMapPageState extends State<QuestMapPage> {
+  getSelectedStage(quests) {
     List<Stage> stages = [];
     for (var quest in quests) {
       stages.add(quest.getCurrentStage());
     }
-    return stages;
+    return stages.isNotEmpty ? stages[0] : null;
   }
 
   getQuestCards(List<Quest> data) {
     return data.map((quest) {
       return Padding(
         padding: const EdgeInsets.all(8.0),
-        child: QuestCard(db, quest, false, true),
+        child: QuestCard(widget.db, quest, false, true),
       );
     }).toList();
   }
 
+locationCompleteCallback(location){
+  setState(() => location.complete = !location.complete);
+}
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: StreamBuilder<List<Quest>>(
-          stream: db.listenToSelectedQuests(),
-          initialData: [],
-          builder: (context, snapshot) => snapshot.hasData
-              ? Stack(
-                  children: [
-                    QuestMap(getSelectedStages(snapshot.data)),
-                    Column(
-                      children: getQuestCards(snapshot.data!),
-                    )
-                  ],
-                )
-              : QuestMap([])),
+    return SafeArea(
+      child: Scaffold(
+        body: StreamBuilder<List<Quest>>(
+            stream: widget.db.listenToSelectedQuests(),
+            initialData: [],
+            builder: (context, snapshot) => snapshot.hasData
+                ? Stack(
+                    children: [
+                      QuestMap(widget.db, getSelectedStage(snapshot.data),locationCompleteCallback),
+                      Column(
+                        children: getQuestCards(snapshot.data!),
+                      )
+                    ],
+                  )
+                : QuestMap(widget.db, null, null)),
+      ),
     );
   }
 }

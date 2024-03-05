@@ -29,9 +29,9 @@ class Database {
     db.writeTxnSync(() => db.quests.putSync(quest));
   }
 
-  getSelectedQuest() async {
+  Future<Quest?> getSelectedQuest() async {
     final db = await isar;
-    return db.quests.filter().selectedEqualTo(true);
+    return db.quests.filter().selectedEqualTo(true).findFirst();
   }
 
   getActiveQuests() async {

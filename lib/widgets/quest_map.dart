@@ -10,9 +10,13 @@ import 'package:questlines/services/location.dart';
 import 'package:questlines/types/stage.dart';
 
 class QuestMap extends StatefulWidget {
-  List<Stage> stages;
+  Stage? stage;
 
-  QuestMap(this.stages, {super.key});
+  var db;
+
+  var locationCompleteCallback;
+
+  QuestMap(this.db, this.stage, this.locationCompleteCallback, {super.key});
 
   @override
   State<QuestMap> createState() => _QuestMapState();
@@ -39,13 +43,23 @@ class _QuestMapState extends State<QuestMap> {
   }
 
   List<Marker> createMarkers() {
-    var markerList = widget.stages
-        .where((stage) => stage.hasLocation())
-        .map((stage) => Marker(
-            child: ACTIVE_STAGE_ICON,
-            point: LatLng(stage.latitude!, stage.longitude!)))
-        .toList();
+    List<Marker> markerList = [];
+    if (widget.stage != null) {
+      widget.stage!.locations
+          .map((location) => markerList.add(Marker(
+              child: IconButton(
+                  onPressed: () => {
+                        widget.locationCompleteCallback(location),
+                        widget.db.saveStage(widget.stage)
+                      },
+                  icon: location.complete
+                      ? COMPLETE_LOCATION_ICON
+                      : ACTIVE_STAGE_ICON),
+              point: LatLng(location.latitude!, location.longitude!))))
+          .toList();
+    }
     markerList.add(playerMarker!);
+
     return markerList;
   }
 
@@ -70,10 +84,7 @@ class _QuestMapState extends State<QuestMap> {
                       TileLayer(
                           urlTemplate: MAP_TILE_URL,
                           userAgentPackageName: PACKAGE_NAME),
-                      MarkerLayer(
-                          markers: widget.stages.isEmpty
-                              ? [playerMarker!]
-                              : createMarkers())
+                      MarkerLayer(markers: createMarkers())
                     ],
                   ),
                   Positioned.fromRelativeRect(

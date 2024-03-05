@@ -7,7 +7,6 @@ import 'package:questlines/constants/icons.dart';
 import 'package:questlines/constants/strings.dart';
 import 'package:questlines/constants/values.dart';
 import 'package:questlines/services/location.dart';
-import 'package:questlines/services/sizes.dart';
 
 class LocationPicker extends StatefulWidget {
   var locationCallback;
@@ -56,16 +55,15 @@ class _LocationPickerState extends State<LocationPicker> {
                 options: MapOptions(
                     onTap: (position, latLng) => {
                           setState(() => {
-                                if (markers.length > 1)
-                                  {markers.removeLast()},
                                 markers.add(Marker(
-                                    child: ACTIVE_STAGE_ICON,
-                                    point: latLng)),
+                                    child: ACTIVE_STAGE_ICON, point: latLng)),
                                 widget.locationCallback(latLng)
                               })
                         },
                     initialCenter: location!,
-                    initialZoom: INITIAL_ZOOM),
+                    initialZoom: INITIAL_ZOOM,
+                    interactionOptions: InteractionOptions(
+                        flags: InteractiveFlag.all & ~InteractiveFlag.rotate)),
                 children: [
                   TileLayer(
                       urlTemplate: MAP_TILE_URL,
@@ -79,9 +77,8 @@ class _LocationPickerState extends State<LocationPicker> {
                 heightFactor: 0.5,
                 child: IconButton(
                   icon: RESET_LOCATION_ICON,
-                  onPressed: () => {
-                    mapController.moveAndRotate(location!, INITIAL_ZOOM, 0)
-                  },
+                  onPressed: () =>
+                      {mapController.moveAndRotate(location!, INITIAL_ZOOM, 0)},
                 ),
               ),
             ]),

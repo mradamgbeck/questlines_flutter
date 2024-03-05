@@ -12,12 +12,17 @@ generateQuest() {
   var stageAmount = Random().nextInt(8) + 1;
   List<Stage> stages = [];
   for (var i = 0; i < stageAmount; i++) {
+    var locationAmount = Random().nextInt(8) + 1;
+
     Stage stage = Stage()
       ..name = getRandomVerbTheNoun()
       ..quest.value = quest
-      ..priority = i
-      ..latitude = getRandomLatitude()
-      ..longitude = getRandomLongitude();
+      ..priority = i;
+
+    for (var i = 0; i < locationAmount; i++) {
+      stage.locations
+          .add(StageLocation(getRandomLatitude(), getRandomLongitude()));
+    }
 
     if (Random().nextBool()) {
       var maxDate = INT_MAX;
@@ -36,14 +41,14 @@ getRandomLatitude() {
   var random = Random();
   double min = 42.18725;
   double max = 42.27741;
-  return min + random.nextDouble() * (max-min) ;
+  return min + random.nextDouble() * (max - min);
 }
 
 getRandomLongitude() {
   var random = Random();
   double min = -83.79626;
   double max = -83.51207;
-  return min + random.nextDouble() * (max-min) ;
+  return min + random.nextDouble() * (max - min);
 }
 
 getRandomVerbTheNoun() =>

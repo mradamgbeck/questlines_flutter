@@ -44,8 +44,7 @@ class _AddStageState extends State<AddStage> {
 
     locationCallback(LatLng location) {
       setState(() {
-        stage.latitude = location.latitude;
-        stage.longitude = location.longitude;
+        stage.locations.add(StageLocation(location.latitude, location.longitude));
       });
     }
 

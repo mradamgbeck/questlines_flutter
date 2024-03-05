@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_typing_uninitialized_variables, must_be_immutable
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:questlines/constants/icons.dart';
 import 'package:questlines/pages/edit_quest_page.dart';
@@ -49,8 +50,8 @@ class QuestCard extends StatelessWidget {
                           child: Column(
                             children: [
                               StyledText.cardBody(stage.name),
-                              if (stage.deadline != null)
-                                StyledText.cardBody('${getRemainingTime(stage.deadline)} remain')
+                              StyledText.cardBody(
+                              "${stage.getCompletedLocationFraction()}")
                             ],
                           ),
                         ),
@@ -66,11 +67,12 @@ class QuestCard extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: SizedBox(
-                          width: 190,
-
+                      width: 190,
                       child: Column(
                         children: [
                           StyledText.cardBody(selectedStage.name),
+                          StyledText.cardBody(
+                              "${selectedStage.getCompletedLocationFraction()}"),
                           if (selectedStage.deadline != null)
                             StyledText.cardBody(
                                 '${getRemainingTime(selectedStage.deadline)} remain')

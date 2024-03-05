@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:isar/isar.dart';
 import 'package:questlines/types/quest.dart';
 part 'stage.g.dart';
@@ -12,17 +13,27 @@ class Stage {
   bool complete = false;
   final quest = IsarLink<Quest>();
   DateTime? deadline;
-  double? latitude;
-  double? longitude;
+  List<StageLocation> locations = [];
 
   Stage();
 
   bool hasLocation() {
-    if (latitude == null || longitude == null) {
-      return false;
-    } else if (latitude!.isNaN & longitude!.isNaN) {
-      return false;
-    }
-    return true;
+    return locations.isNotEmpty;
   }
+
+  int getCompleteLocationAmount() {
+    return locations.where((element) => element.complete).toList().length;
+  }
+
+  getCompletedLocationFraction(){
+    return "${getCompleteLocationAmount()}/${locations.length}";
+  }
+}
+
+@embedded
+class StageLocation {
+  StageLocation([this.latitude, this.longitude]);
+  double? latitude;
+  double? longitude;
+  bool complete = false;
 }

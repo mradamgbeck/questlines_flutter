@@ -21,6 +21,15 @@ const Icon ACTIVE_STAGE_ICON = Icon(
   ],
   size: ICON_SIZE,
 );
+const Icon COMPLETE_LOCATION_ICON = Icon(
+  Icons.api,
+  color: Colors.white, 
+  shadows: [
+    Shadow(color: Color.fromARGB(255, 189, 233, 30), blurRadius: 25),
+    Shadow(color: Color.fromARGB(255, 86, 244, 54), blurRadius: 75),
+  ],
+  size: ICON_SIZE,
+);
 const Icon RESET_LOCATION_ICON = Icon(
   Icons.adjust_outlined,
   color: Colors.white, 
