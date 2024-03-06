@@ -50,7 +50,7 @@ class QuestCard extends StatelessWidget {
                             children: [
                               StyledText.cardBody(stage.name),
                               StyledText.cardBody(
-                              "${stage.getCompletedLocationFraction()}")
+                                  "${stage.getCompletedLocationFraction()}")
                             ],
                           ),
                         ),

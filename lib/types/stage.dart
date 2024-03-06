@@ -1,4 +1,3 @@
-import 'package:collection/collection.dart';
 import 'package:isar/isar.dart';
 import 'package:questlines/types/quest.dart';
 part 'stage.g.dart';
