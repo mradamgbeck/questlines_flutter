@@ -1,6 +1,5 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_typing_uninitialized_variables, must_be_immutable
 
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:questlines/constants/icons.dart';
 import 'package:questlines/pages/edit_quest_page.dart';

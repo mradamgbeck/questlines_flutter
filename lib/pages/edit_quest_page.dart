@@ -2,15 +2,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:questlines/constants/icons.dart';
 import 'package:questlines/constants/strings.dart';
-import 'package:questlines/constants/values.dart';
 import 'package:questlines/main.dart';
 import 'package:questlines/services/sizes.dart';
 import 'package:questlines/services/time.dart';
 import 'package:questlines/types/quest.dart';
 import 'package:questlines/widgets/add_stage.dart';
-import 'package:questlines/widgets/location_picker.dart';
 import 'package:questlines/widgets/styled_text.dart';
 import '../types/stage.dart';
 
@@ -40,7 +37,6 @@ class _EditQuestPageState extends State<EditQuestPage> {
     if (widget.quest.stages.isNotEmpty) {
       stages = widget.quest.getStagesSorted();
     }
-    DateTime? stageDeadline;
 
     selectFirstStage() {
       for (int i = 0; i < stages.length; i++) {
@@ -68,7 +64,6 @@ class _EditQuestPageState extends State<EditQuestPage> {
       saveAll();
       stageController.clear();
       widget.stageLocation = null;
-      stageDeadline = null;
     }
 
     moveStageUp(stageToMoveUp) {
